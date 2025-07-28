@@ -20,5 +20,7 @@ print(repetidos)
 # theguardian.com, telegraph.co.uk, dailymail.co.uk 
 # The new data base will be only the URLS of this papers: theguardian.com, telegraph.co.uk, dailymail.co.uk 
 df_clean = df[(df["media_url"] == "theguardian.com") |( df["media_url"] == "telegraph.co.uk") | (df["media_url"] == "dailymail.co.uk") ] 
-df_clean = df_clean[["id", "indexed_date", "media_url", "publish_date", "title", "url"]]
+df_clean = df_clean[["id","media_url", "publish_date", "title", "url"]]
+# df_clean = df_clean.reset_index()
 print(df_clean)
+df_clean.to_csv("URLs_clean.csv")
