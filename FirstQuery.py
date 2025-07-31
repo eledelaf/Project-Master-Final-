@@ -23,4 +23,4 @@ df_clean = df[(df["media_url"] == "theguardian.com") |( df["media_url"] == "tele
 df_clean = df_clean[["id","media_url", "publish_date", "title", "url"]]
 # df_clean = df_clean.reset_index()
 print(df_clean)
-df_clean.to_csv("URLs_clean.csv")
+df_clean.to_csv("URLs_clean.csv", sep = ";")
