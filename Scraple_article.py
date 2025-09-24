@@ -51,7 +51,7 @@ def scrape_and_save_to_word(url, filename="contenido_web.docx"):
     except Exception as e:
         print(f"Ha ocurrido un error inesperado: {e}")
 
-# --- Ejemplo de uso ---
+
 if __name__ == "__main__":
     # Pide al usuario que introduzca la URL
     target_url = input("Introduce la URL de la página web que quieres descargar: ")
