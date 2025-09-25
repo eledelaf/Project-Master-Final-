@@ -15,7 +15,18 @@ try:
     db = client["URLS"]
     # Colección
     collection = db["Primer Querys"]
+    """
+    #Devuelve el primer elemento de la colección
+    x = collection.find_one()
+    print(type(x)) 
+    """
+    # bucle para conseguir todos los urls
+    # Tengo que ver si puedo hacer esto con programación paralela
+    for x in collection.find({}, {"url": 1 }):
+        # x es un dicionario de este estilo: {'_id': ObjectId('68c884765e53157e3ed0e2e8'), 'url': str}
+        print(x) 
     
+   
 
 except Exception as e:
     print(e)
