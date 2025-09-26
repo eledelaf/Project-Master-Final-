@@ -14,26 +14,11 @@ def scrape_and_save_to_word(url, filename):
         # Analizar el contenido HTML de la página
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Crear un nuevo documento de Word
-        document = Document()
-
-        # Añadir el título de la página como un encabezado en el documento
-        page_title = soup.title.string if soup.title else 'Sin Título'
-        document.add_heading(page_title, level=1)
-
-        # Extraer todo el texto de la página
-        # El método get_text() extrae todo el texto de las etiquetas HTML
-        # El parámetro 'strip=True' elimina los espacios en blanco innecesarios
-        # El parámetro 'separator' añade un salto de línea entre los bloques de texto
+        # Extraer todo el texto de la página como str
         text = soup.get_text(separator='\n', strip=True)
 
-        # Añadir el texto extraído al documento de Word
-        document.add_paragraph(text)
-
-        # Guardar el documento
-        file_title = f"{filename}.docx"
-        document.save(file_title)
-        print(f"¡El contenido de la web se ha guardado en '{file_title}' exitosamente! ✅")
+        # Devolver título y texto juntos
+        return text
 
     except requests.exceptions.RequestException as e:
         print(f"Error al intentar acceder a la URL: {e}")
