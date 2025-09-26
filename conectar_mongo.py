@@ -11,8 +11,8 @@ def first(collection):
     print(target_dict) # {'_id': ObjectId('68c884685e53157e3ed0a311'), 'id': '6...3', ... , 'title': str, 'url': str}
     target_url = target_dict["url"]
     target_title = target_dict["title"]
-    #print(target_url)
-    return(target_url, target_title)
+    target_id = target_dict["_id"]
+    return(target_url, target_title, target_id)
 
 def bucle_urls(collection):
     # bucle para conseguir todos los urls
@@ -21,6 +21,9 @@ def bucle_urls(collection):
             # x es un dicionario de este estilo: {'_id': ObjectId('68c884765e53157e3ed0e2e8'), 'url': str, "title": str}
             print(x)
 
+def insert_in_col(collection, data: dict, db_name = "URLS"):
+    # Saves the data if the id is not already in the collection
+     return 
 
 if __name__ == "__main__":
     # Create a new client and connect to the server
@@ -34,11 +37,16 @@ if __name__ == "__main__":
         db = client["URLS"]
         # Colección
         collection = db["Primer Querys"]
+        coll_texts = db["Texts"]
         
         #Devuelve el primer elemento de la colección
-        target_url, target_title = first(collection)
+        target_url, target_title, target_id = first(collection)
         target_text = scrape_and_save_to_word(target_url, target_title) # STR
         
-        
+        # Crear un diccionario con los elementos que quiero 
+        target_dict = {"_id": target_id, "url": target_url, "title": target_title, "text": target_text}
+        print(target_dict)
+        print(collection.find_one())
+
     except Exception as e:
         print(e)

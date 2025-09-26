@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-from docx import Document
 
 def scrape_and_save_to_word(url, filename):
     try:
