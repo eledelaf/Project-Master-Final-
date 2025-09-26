@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from docx import Document
 
-def scrape_and_save_to_word(url, filename="contenido_web.docx"):
+def scrape_and_save_to_word(url, title):
     try:
         # Realizar la solicitud HTTP a la URL
         headers = {
@@ -31,8 +31,9 @@ def scrape_and_save_to_word(url, filename="contenido_web.docx"):
         document.add_paragraph(text)
 
         # Guardar el documento
-        document.save(filename)
-        print(f"¡El contenido de la web se ha guardado en '{filename}' exitosamente! ✅")
+        file_title = f"{title}.docx"
+        document.save(file_title)
+        print(f"¡El contenido de la web se ha guardado en '{file_title}' exitosamente! ✅")
 
     except requests.exceptions.RequestException as e:
         print(f"Error al intentar acceder a la URL: {e}")
