@@ -1,4 +1,4 @@
-import pandas as pd 
+import pandas as pd
 
 # Upload the data set of URLS
 file_path = "/Users/elenadelafuente/Desktop/MASTER/TFM/Project/Project-Master/URLS.csv"
@@ -17,9 +17,9 @@ repetidos = conteo[conteo > 100]
 print(repetidos)
 
 # No aparece the times(conservador), asi que tengo que buscar otro periodico que sea de la misma mentalidad, voy a usar el daily (necesito una subscripción)
-# theguardian.com, telegraph.co.uk, dailymail.co.uk 
-# The new data base will be only the URLS of this papers: theguardian.com, telegraph.co.uk, dailymail.co.uk 
-df_clean = df[(df["media_url"] == "theguardian.com") |( df["media_url"] == "telegraph.co.uk") | (df["media_url"] == "dailymail.co.uk") ] 
+# theguardian.com, telegraph.co.uk, dailymail.co.uk # PONER QUE EL DAILY MAIL SOLO HABLA DEL EXTREME RIGHT
+# The new data base will be only the URLS of this papers: theguardian.com, telegraph.co.uk, dailymail.co.uk
+df_clean = df[(df["media_url"] == "theguardian.com") |( df["media_url"] == "telegraph.co.uk") | (df["media_url"] == "dailymail.co.uk") ]
 df_clean = df_clean[["id","media_url", "publish_date", "title", "url"]]
 # df_clean = df_clean.reset_index()
 print(df_clean)

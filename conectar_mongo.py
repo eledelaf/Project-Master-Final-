@@ -2,6 +2,7 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from fun_scraple import scrape_and_save_to_word
+import time
 
 uri = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
 def first(collection):
@@ -44,9 +45,9 @@ if __name__ == "__main__":
         target_text = scrape_and_save_to_word(target_url, target_title) # STR
         
         # Crear un diccionario con los elementos que quiero 
-        target_dict = {"_id": target_id, "url": target_url, "title": target_title, "text": target_text}
+        target_dict = {"_id": target_id, "url": target_url, "title": target_title, "text": target_text, "time_scrapped": time.time()}
         print(target_dict)
         print(collection.find_one())
-
+        
     except Exception as e:
         print(e)
