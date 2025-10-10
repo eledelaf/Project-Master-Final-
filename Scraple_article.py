@@ -54,6 +54,7 @@ def scrape_and_save_to_word(url, filename="contenido_web.docx"):
 
 if __name__ == "__main__":
     # Pide al usuario que introduzca la URL
-    target_url = input("Introduce la URL de la página web que quieres descargar: ")
+    # target_url = input("Introduce la URL de la página web que quieres descargar: ")
+    target_url = "https://www.telegraph.co.uk/travel/terms-and-conditions/railbookers-terms-and-conditions/"
     # Llama a la función con la URL proporcionada
     scrape_and_save_to_word(target_url)
