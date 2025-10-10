@@ -27,4 +27,9 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - The fun_scraple() function is called from conectar_mongo.py.
    - This script retrieves URLs from the MongoDB collection, runs the scraping function for each, and is designed to store the resulting articles directly in MongoDB for future processing.
    - Managed to get the URL from mongo, do the scrapping, and update the text to a new library in mongoDB.
-   
+
+5. 
+   - I am going to make sure that my scrapping function works for the 3 papers that we are working with (TO DO)
+
+6. 
+   - Make the code work for a large data set, since now it works for just one URL we want to use bucles, and threads to iterate the process (TO DO)
