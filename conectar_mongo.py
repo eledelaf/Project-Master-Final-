@@ -22,9 +22,21 @@ def bucle_urls(collection):
             # x es un dicionario de este estilo: {'_id': ObjectId('68c884765e53157e3ed0e2e8'), 'url': str, "title": str}
             print(x)
 
-def insert_in_col(collection, data: dict, db_name = "URLS"):
+def update_in_col(collection, data: dict, db_name = "URLS"):
     # Saves the data if the id is not already in the collection
-
+    if "_id" in data:
+        filter = {"_id": data["_id"]}
+    elif "url" in data:
+        filter = {"url": data["url"]}
+    else:
+        raise ValueError("data must contain '_id' or 'url' for a safe upsert")
+    
+    result = collection.update_one(filter, {"$set":data}, upsert=True)
+    if result.upserted_id:
+        print("Inserted new doc")
+    else:
+        print("Updated existing")
+    
 if __name__ == "__main__":
     # Create a new client and connect to the server
     client = MongoClient(uri, server_api=ServerApi('1'))
@@ -47,11 +59,8 @@ if __name__ == "__main__":
         target_dict = {"_id": target_id, "url": target_url, "title": target_title, "text": target_text, "time_scrapped": time.time()}
         #print(target_dict)
         #print(collection.find_one())
-        try: 
-            resultado = collection.insert_one(target_dict) # Saves the data
-            print(f"Documento insertado con ID: {resultado.inserted_id}")
-        except:
-             print("Skipped duplicate")
+        update_in_col(coll_texts, target_dict)
+
         
     except Exception as e:
         print(e)
