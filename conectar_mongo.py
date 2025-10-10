@@ -24,9 +24,6 @@ def bucle_urls(collection):
 
 def insert_in_col(collection, data: dict, db_name = "URLS"):
     # Saves the data if the id is not already in the collection
-    resultado = collection.insert_one(data)
-    print(f"Documento insertado con ID: {resultado.inserted_id}")
-    return 
 
 if __name__ == "__main__":
     # Create a new client and connect to the server
@@ -48,9 +45,13 @@ if __name__ == "__main__":
         
         # Crear un diccionario con los elementos que quiero 
         target_dict = {"_id": target_id, "url": target_url, "title": target_title, "text": target_text, "time_scrapped": time.time()}
-        print(target_dict)
-        print(collection.find_one())
-        insert_in_col(collection, target_dict)
+        #print(target_dict)
+        #print(collection.find_one())
+        try: 
+            resultado = collection.insert_one(target_dict) # Saves the data
+            print(f"Documento insertado con ID: {resultado.inserted_id}")
+        except:
+             print("Skipped duplicate")
         
     except Exception as e:
         print(e)
