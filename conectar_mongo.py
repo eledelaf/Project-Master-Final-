@@ -1,7 +1,7 @@
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from fun_scraple import scrape_and_save_to_word
+from fun_scraple import scrape_and_text
 import time
 
 uri = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
@@ -24,7 +24,9 @@ def bucle_urls(collection):
 
 def insert_in_col(collection, data: dict, db_name = "URLS"):
     # Saves the data if the id is not already in the collection
-     return 
+    resultado = collection.insert_one(data)
+    print(f"Documento insertado con ID: {resultado.inserted_id}")
+    return 
 
 if __name__ == "__main__":
     # Create a new client and connect to the server
@@ -42,12 +44,13 @@ if __name__ == "__main__":
         
         #Devuelve el primer elemento de la colección
         target_url, target_title, target_id = first(collection)
-        target_text = scrape_and_save_to_word(target_url, target_title) # STR
+        target_text = scrape_and_text(target_url, target_title) # STR
         
         # Crear un diccionario con los elementos que quiero 
         target_dict = {"_id": target_id, "url": target_url, "title": target_title, "text": target_text, "time_scrapped": time.time()}
         print(target_dict)
         print(collection.find_one())
+        insert_in_col(collection, target_dict)
         
     except Exception as e:
         print(e)

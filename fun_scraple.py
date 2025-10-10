@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-def scrape_and_save_to_word(url, filename):
+def scrape_and_text(url, filename):
     try:
         # Realizar la solicitud HTTP a la URL
         headers = {
