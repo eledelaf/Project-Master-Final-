@@ -29,8 +29,9 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - Managed to get the URL from mongo, do the scrapping, and update the text to a new library in mongoDB.
 
 5. 
-   - I am going to make sure that my scrapping function works for the 3 papers that we are working with. The telegraph is not accessible (403 Client Error)
-   - Find a way to do the scrapping on the Telegraph (TO DO)
+   - I am going to make sure that my scrapping function works for the 3 papers that we are working with. 
+   - The telegraph is not accessible (403 Client Error). Find a way to do the scrapping on the Telegraph (TO DO)
 
 6. 
    - Make the code work for a large data set, since now it works for just one URL we want to use bucles, and threads to iterate the process (TO DO)
+   - 

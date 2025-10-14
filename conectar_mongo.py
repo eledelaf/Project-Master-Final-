@@ -21,6 +21,7 @@ def bucle_urls(collection):
         for x in collection.find({}, {"url": 1, "title": 1}):
             # x es un dicionario de este estilo: {'_id': ObjectId('68c884765e53157e3ed0e2e8'), 'url': str, "title": str}
             print(x)
+    
 
 def update_in_col(collection, data: dict, db_name = "URLS"):
     # Saves the data if the id is not already in the collection
@@ -50,6 +51,7 @@ if __name__ == "__main__":
         # Colección
         collection = db["Primer Querys"]
         coll_texts = db["Texts"]
+        print(bucle_urls(collection))
         
         #Devuelve el primer elemento de la colección
         target_url, target_title, target_id = first(collection)
