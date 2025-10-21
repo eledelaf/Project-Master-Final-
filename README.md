@@ -32,7 +32,8 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - I am going to make sure that my scrapping function works for the 3 papers that we are working with. 
    - The telegraph is not accessible (403 Client Error). Find a way to do the scrapping on the Telegraph 
    - Is been 2 weeks and i havent found a way to do the scrapping on the telegraph so we are going to use another news paper with the same ideology thats on the MediaCloud Database 
-
+   - Since I had to change the the telegraph to the standard, now we have a new daataset URLS_clean, with those 3 papers.
+   - Lets check if the scrapping works in the standard, it works
 6. 
    - Make the code work for a large data set, since now it works for just one URL we want to use bucles, and threads to iterate the process (TO DO)
    - 
