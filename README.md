@@ -33,7 +33,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - The telegraph is not accessible (403 Client Error). Find a way to do the scrapping on the Telegraph 
    - Is been 2 weeks and i havent found a way to do the scrapping on the telegraph so we are going to use another news paper with the same ideology thats on the MediaCloud Database 
    - Since I had to change the the telegraph to the standard, now we have a new daataset URLS_clean, with those 3 papers.
-   - Lets check if the scrapping works in the standard, it works
+   - Lets check if the scrapping works in the standard, using Scraple_article.py, it works
 6. 
    - Make the code work for a large data set, since now it works for just one URL we want to use bucles, and threads to iterate the process (TO DO)
-   - 
+   - Instead of importing the URLS_clean to mongoDB I am going to create a new python file that takes the csv file from my computer and creates a new dataset with the article in MONGODB
