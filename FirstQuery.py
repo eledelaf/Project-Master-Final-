@@ -1,4 +1,8 @@
 import pandas as pd
+"""
+This python file does the first query getting from URLS gotten directly from 
+MediaCLoud to URLS_clean where i have the urls that i am going to use for the scrapping
+"""
 
 # Upload the data set of URLS
 file_path = "/Users/elenadelafuente/Desktop/MASTER/TFM/Project/Project-Master/URLS.csv"
