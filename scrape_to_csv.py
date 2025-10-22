@@ -19,15 +19,16 @@ df_1[['time scrapped', 'text']] = pd.NA # Created the columns
 
 # 3. Scrapping
 # I am going to try with the column url and the first 5 rows
-df_url = df_1[['title','url','text']].iloc[0:5]
+df_url = df_1[['title','url','text','time scrapped' ]].iloc[0:5]
 
-#### A PARTIR DE AQUI NO FUNCIONA
-# Lets get the first url and get the text
+
+# Lets get the first url and get the text 
+# Just a sample 
 for i in range(5):
     url = df_url['url'][i]
     title = df_url['title'][i]
     df_url['text'][i] = scrape_and_text(url, title)
-
+    df_url['time scrapped'] = datetime.now()
 df_url.to_csv('sample.csv', index = False)
 
 
