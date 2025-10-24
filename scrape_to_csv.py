@@ -1,3 +1,4 @@
+
 import pandas as pd
 from datetime import datetime
 from fun_scraple import scrape_and_text
@@ -25,8 +26,8 @@ df_1[['time scrapped', 'text']] = pd.NA # Created the columns
 # Lets get the first url and get the text 
 # Just a sample 
 for i in range(5):
-    url = df_1['url'][i]
-    title = df_1['title'][i]
+    url = df_1.loc['url', i]
+    title = df_1.loc['title', i]
     df_1['text'][i] = scrape_and_text(url, title)
     df_1['time scrapped'] = datetime.now()
 df_1.to_csv('sample.csv', index = False)
