@@ -39,4 +39,5 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - Instead of importing the URLS_clean to mongoDB I am going to create a new python file that takes the csv file from my computer and creates a new csv file with the article written on it (scrapple_to_csv.py)
    - In the scrape_to_csv file I took the information form URLS_clean and created the csv file with the columns i needed and added "time scrapped" and "text" that are empty at the moment.
    - Use the TEXTS.csv file and filled out
+   - I created scrape_to_csv.py to do that, and saves it in scraped_data_checkpoints and 
    
