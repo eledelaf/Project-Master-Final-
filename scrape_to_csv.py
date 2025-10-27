@@ -4,7 +4,7 @@ import time
 import random
 import os  # Needed for file check
 
-from datetime import datetime
+from datetime import datetime, timezone
 from fun_scraple import scrape_and_text  # Scrapping function
 from tqdm import tqdm  # For a nice progress bar
 from pymongo.mongo_client import MongoClient # To connect to mongo
@@ -20,7 +20,6 @@ multi-threading, and updates the text into mongoDB.
 MAX_WORKERS = 8  # Number of threads. Adjust based on your network/CPU.
 SAVE_INTERVAL = 100  # Save a checkpoint every N URLs
 INPUT_FILE = "URLS_clean.csv"
-CHECKPOINT_FILE = 'scraped_data_checkpoint.csv'
 FINAL_NAME = 'ScrapedDataFinal' # This is the name of the db on mongo where we are going to upload the texts
 
 # --- 0.2 Connection to Mongo ---
@@ -77,36 +76,14 @@ df_1 = df_1[df_1['url'].str.startswith('http')]
 df_1 = df_1.drop_duplicates(subset=['url'])
 
 
-# --- 3. Check for Checkpoint File to Resume ---
+# --- 3. Check in MONGO if that URL is been used already ---
 def ensure_indexes():
     coll_texts.create_index("status")
     coll_texts.create_index("publish_date")
+ensure_indexes()
 
-if os.path.exists(CHECKPOINT_FILE):
-    print(f"Found checkpoint file. Loading progress from {CHECKPOINT_FILE}...")
-    df_check = pd.read_csv(CHECKPOINT_FILE, sep=';')
-    
-    # Create the output columns in the original df_1
-    df_1['time scrapped'] = pd.NaT
-    df_1['text'] = pd.NA
-    
-    # Set index to 'url' for easy updating
-    # This avoids issues with mismatched integer indices
-    df_1 = df_1.set_index('url')
-    df_check = df_check.set_index('url')
-    
-    # Update df_1 with the valid data from the checkpoint
-    df_1.update(df_check)
-    
-    # Reset index to go back to normal
-    df_1 = df_1.reset_index()
-    print("Resume complete. Will only scrape missing URLs.")
+existing = set(doc["_id"] for doc in coll_texts.find({"status": "done"}, {"_id": 1}))
 
-else:
-    print("No checkpoint file found. Starting from scratch.")
-    # Create the output columns, empty to start
-    df_1['time scrapped'] = pd.NaT  # Use NaT (Not-a-Time) for datetimes
-    df_1['text'] = pd.NA         # Use pd.NA for missing text
 
 """
 # --- 4. Scrapping with ThreadPoolExecutor ---
@@ -159,7 +136,7 @@ else:
                 # Save checkpoint
                 if completed_count % SAVE_INTERVAL == 0:
                     print(f"\nCheckpoint: Saving progress ({completed_count}/{total_to_scrape})...")
-                    df_1.to_csv(CHECKPOINT_FILE, index=False, sep=';')
+                    df_1.to_csv(CHECKPOINT_FILE, index=False, sep=';') ### QUITAR EL CHECKPOINT
                     
             except Exception as e:
                 # Handle errors from the future.result() call itself
