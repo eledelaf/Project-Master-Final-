@@ -2,13 +2,11 @@ import pandas as pd
 import concurrent.futures
 import time
 import random
-import os  # Needed for file check
 
 from datetime import datetime, timezone
 from fun_scraple import scrape_and_text  # Scrapping function
 from tqdm import tqdm  # For a nice progress bar
 from pymongo.mongo_client import MongoClient # To connect to mongo
-from pymongo.server_api import ServerApi
 from pymongo.errors import PyMongoError
 from pymongo import UpdateOne
 
@@ -19,9 +17,7 @@ multi-threading, and updates the text into mongoDB.
 
 # --- 0.1 Configuration ---
 MAX_WORKERS = 8  # Number of threads. Adjust based on your network/CPU.
-SAVE_INTERVAL = 100  # Save a checkpoint every N URLs
 INPUT_FILE = "URLS_clean.csv"
-FINAL_NAME = 'ScrapedDataFinal' # This is the name of the db on mongo where we are going to upload the texts
 
 # --- 0.2 Connection to Mongo ---
 Mongo_uri = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
@@ -64,12 +60,13 @@ def process_url(index, url, title):
 # --- 2. Load and Prepare Data ---
 print(f"Loading data from {INPUT_FILE}...")
 try:
-    df = pd.read_csv(INPUT_FILE, sep=";")
+    df = pd.read_csv(INPUT_FILE, sep=";").sample(n=10)
 except FileNotFoundError:
     print(f"Error: {INPUT_FILE} not found. Please make sure it's in the same directory.")
     exit()
 
 df_1 = df[['id', 'publish_date', 'title', 'url']].copy()
+
 
 # Clean URLs and drop duplicates
 df_1['url'] = df_1['url'].astype(str).str.strip()
@@ -98,6 +95,10 @@ rows_to_scrape = [(idx, row["url"], row["title"])
                 if row["url"] not in already_in_mongo]
 print(f"To scrape now: {len(rows_to_scrape)} (out of {len(df_1)})")
 
+if not rows_to_scrape:
+    print("Nothing to scrape. Exiting.")
+    exit(0)
+
 
 # --- 4. Scrapping with ThreadPoolExecutor ---
 def update_collection(collection, data:dict):
@@ -109,58 +110,83 @@ def update_collection(collection, data:dict):
         raise ValueError("data must contain '_id' or 'url' for a safe upsert")
     collection.update_one(flt, {"$set": data}, upsert=True)
 
+# OPTIONAL: seed 'pending' documents for observability in Mongo UI
+now_utc = datetime.now(timezone.utc)
+seed_ops = []
+for idx, url, title in rows_to_scrape:
+    pub = df_1.loc[idx, "publish_date"]
+    seed_ops.append(
+        UpdateOne({"_id": url},
+                  {"$setOnInsert": {
+                      "_id": url,
+                      "url": url,
+                      "title": title,
+                      "publish_date": pub,
+                      "status": "pending",
+                      "time_enqueued": now_utc
+                  }},
+                  upsert=True)
+    )
+if seed_ops:
+    try:
+        coll_texts.bulk_write(seed_ops, ordered=False)
+    except PyMongoError as e:
+        print(f"Seeding warning: {e}")
+
 print(f"Starting scrape with {MAX_WORKERS} workers...")
-
 total_to_scrape = len(rows_to_scrape)
-if total_to_scrape == 0:
-    print("All URLs already scraped according to checkpoint.")
-else:
-    print(f"Total URLs to scrape: {total_to_scrape} (out of {len(df_1)} total)")
-"""
-    completed_count = 0
-    
-    # We use a context manager to ensure threads are cleaned up properly
-    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        
-        # Submit all jobs to the executor.
-        # We map 'futures' to the original dataframe index
-        future_to_index = {
-            executor.submit(process_url, index, url, title): index
-            for (index, url, title) in rows_to_scrape
-        }
-        
-        # Use as_completed to get results as soon as they are done
-        # Wrap with tqdm for a progress bar
-        for future in tqdm(concurrent.futures.as_completed(future_to_index), total=total_to_scrape, desc="Scraping URLs"):
-            index = future_to_index[future]  # Get the original dataframe index
-            
-            try:
-                # Get the result from the thread
-                _index, text, timestamp = future.result()
-                
-                # Update the main dataframe using the original index
-                # .loc is the correct way to assign this
-                df_1.loc[index, 'text'] = text
-                df_1.loc[index, 'time scrapped'] = timestamp
-                
-                completed_count += 1
-                
-                # Save checkpoint
-                if completed_count % SAVE_INTERVAL == 0:
-                    print(f"\nCheckpoint: Saving progress ({completed_count}/{total_to_scrape})...")
-                    df_1.to_csv(CHECKPOINT_FILE, index=False, sep=';') ### QUITAR EL CHECKPOINT
-                    
-            except Exception as e:
-                # Handle errors from the future.result() call itself
-                print(f"\nError processing future for index {index}: {e}")
-                df_1.loc[index, 'text'] = "FUTURE_ERROR"
-                df_1.loc[index, 'time scrapped'] = datetime.now()
+ok = failed = err = 0
 
-# --- 5. Final Save ---
-print("\nScraping complete. Saving final file...")
-df_1.to_csv(FINAL_NAME, index=False, sep=';')
+with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    # submit jobs
+    futures = {
+        executor.submit(process_url, idx, url, title): (idx, url, title)
+        for (idx, url, title) in rows_to_scrape
+    }
+   
+    for future in tqdm(concurrent.futures.as_completed(futures),
+                       total=total_to_scrape, desc="Scraping URLs"):
+        idx, url, title = futures[future]
+        publish_date = df_1.loc[idx, "publish_date"]
 
-print(f"All done! Results saved to {FINAL_NAME}")
-if os.path.exists(CHECKPOINT_FILE):
-    print(f"Checkpoint file {CHECKPOINT_FILE} can be deleted if no longer needed.")
-"""
+        try:
+            _index, text, timestamp = future.result()
+
+            if text == "SCRAPE_FAILED":
+                update_collection(coll_texts, {
+                    "_id": url,
+                    "status": "failed",
+                    "error": "SCRAPE_FAILED",
+                    "time_scraped": timestamp
+                })
+                failed += 1
+            elif isinstance(text, str) and len(text) > 0:
+                update_collection(coll_texts, {
+                    "_id": url,
+                    "url": url,
+                    "title": title,
+                    "publish_date": publish_date,
+                    "text": text,
+                    "status": "done",
+                    "time_scraped": timestamp
+                })
+                ok += 1
+            else:
+                update_collection(coll_texts, {
+                    "_id": url,
+                    "status": "failed",
+                    "error": "EMPTY_TEXT",
+                    "time_scraped": timestamp
+                })
+                failed += 1
+
+        except Exception as e:
+            update_collection(coll_texts, {
+                "_id": url,
+                "status": "error",
+                "error": f"{type(e).__name__}: {e}",
+                "time_scraped": datetime.now(timezone.utc)
+            })
+            err += 1
+
+print(f"Finished. ok={ok} failed={failed} error={err}")
