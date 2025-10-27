@@ -60,7 +60,7 @@ def process_url(index, url, title):
 # --- 2. Load and Prepare Data ---
 print(f"Loading data from {INPUT_FILE}...")
 try:
-    df = pd.read_csv(INPUT_FILE, sep=";").sample(n=10)
+    df = pd.read_csv(INPUT_FILE, sep=";")
 except FileNotFoundError:
     print(f"Error: {INPUT_FILE} not found. Please make sure it's in the same directory.")
     exit()
