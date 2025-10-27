@@ -10,6 +10,7 @@ from tqdm import tqdm  # For a nice progress bar
 from pymongo.mongo_client import MongoClient # To connect to mongo
 from pymongo.server_api import ServerApi
 from pymongo.errors import PyMongoError
+from pymongo import UpdateOne
 
 """
 This script takes the URLS_clean.csv file, scrapes the content using
@@ -88,31 +89,34 @@ known_urls = {d.get("url") for d in coll_texts.find({"url": {"$type": "string"}}
 already_in_mongo = known_ids | {u for u in known_urls if u}
 print(f"Mongo already has {len(already_in_mongo)} URLs.")
 
+# Get a list of rows that still need to be scraped
+# We use .iterrows() which gives (index, Series)
+# We need the *dataframe index* (like 0, 1, 5, 10) to use .loc later
+
 rows_to_scrape = [(idx, row["url"], row["title"])
                 for idx, row in df_1.iterrows()
                 if row["url"] not in already_in_mongo]
 print(f"To scrape now: {len(rows_to_scrape)} (out of {len(df_1)})")
 
-"""
+
 # --- 4. Scrapping with ThreadPoolExecutor ---
+def update_collection(collection, data:dict):
+    if "_id" in data:
+        flt = {"_id": data["_id"]}
+    elif "url" in data:
+        flt = {"url": data["url"]}
+    else:
+        raise ValueError("data must contain '_id' or 'url' for a safe upsert")
+    collection.update_one(flt, {"$set": data}, upsert=True)
+
 print(f"Starting scrape with {MAX_WORKERS} workers...")
 
-# Get a list of rows that still need to be scraped
-# We use .iterrows() which gives (index, Series)
-# We need the *dataframe index* (like 0, 1, 5, 10) to use .loc later
-rows_to_scrape = [
-    (index, row['url'], row['title'])
-    for index, row in df_1.iterrows()
-    if pd.isna(row['text'])
-]
-
 total_to_scrape = len(rows_to_scrape)
-
 if total_to_scrape == 0:
     print("All URLs already scraped according to checkpoint.")
 else:
     print(f"Total URLs to scrape: {total_to_scrape} (out of {len(df_1)} total)")
-
+"""
     completed_count = 0
     
     # We use a context manager to ensure threads are cleaned up properly
