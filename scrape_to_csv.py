@@ -82,8 +82,16 @@ def ensure_indexes():
     coll_texts.create_index("publish_date")
 ensure_indexes()
 
-existing = set(doc["_id"] for doc in coll_texts.find({"status": "done"}, {"_id": 1}))
+# --- 3.1 Build a set of known URLs from Mongo in order to skip them ---
+known_ids = {d["_id"] for d in coll_texts.find({}, {"_id": 1}) if isinstance(d.get("_id"), str)}
+known_urls = {d.get("url") for d in coll_texts.find({"url": {"$type": "string"}}, {"url": 1})}
+already_in_mongo = known_ids | {u for u in known_urls if u}
+print(f"Mongo already has {len(already_in_mongo)} URLs.")
 
+rows_to_scrape = [(idx, row["url"], row["title"])
+                for idx, row in df_1.iterrows()
+                if row["url"] not in already_in_mongo]
+print(f"To scrape now: {len(rows_to_scrape)} (out of {len(df_1)})")
 
 """
 # --- 4. Scrapping with ThreadPoolExecutor ---
