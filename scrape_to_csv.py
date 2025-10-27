@@ -1,41 +1,57 @@
 import pandas as pd
-from datetime import datetime
-from fun_scraple import scrape_and_text  # Your scraping function
 import concurrent.futures
 import time
 import random
-from tqdm import tqdm  # For a nice progress bar
 import os  # Needed for file check
+
+from datetime import datetime
+from fun_scraple import scrape_and_text  # Scrapping function
+from tqdm import tqdm  # For a nice progress bar
+from pymongo.mongo_client import MongoClient # To connect to mongo
+from pymongo.server_api import ServerApi
+from pymongo.errors import PyMongoError
 
 """
 This script takes the URLS_clean.csv file, scrapes the content using
-multi-threading, and creates a new CSV file with the scraped text.
-
-It includes checkpointing and resume capabilities.
+multi-threading, and updates the text into mongoDB.
 """
 
-# --- 0. Configuration ---
+# --- 0.1 Configuration ---
 MAX_WORKERS = 8  # Number of threads. Adjust based on your network/CPU.
 SAVE_INTERVAL = 100  # Save a checkpoint every N URLs
 INPUT_FILE = "URLS_clean.csv"
 CHECKPOINT_FILE = 'scraped_data_checkpoint.csv'
-FINAL_FILE = 'scraped_data_final.csv'
+FINAL_NAME = 'ScrapedDataFinal' # This is the name of the db on mongo where we are going to upload the texts
 
-# --- 1. Define Worker Function ---
+# --- 0.2 Connection to Mongo ---
+Mongo_uri = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
+client = MongoClient(Mongo_uri)
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+        print(e)    
+
+db = client["ProjectMaster"] # Data base
+coll_texts = db["Texts"] # Here is where I am going to upload the Texts after the scrapping
+
+
+# --- 1. Worker Function ---
 def process_url(index, url, title):
     """
     Worker function for each thread.
     Scrapes a single URL and returns the index, text, and timestamp.
     """
+
     try:
         # This makes requests look less robotic and avoids 429 errors
         time.sleep(random.uniform(0.5, 2.5))
 
-        # We pass (url, title) just as you did in your sample
+        # We pass (url, title) 
         text = scrape_and_text(url, title)
         timestamp = datetime.now()
         
-        if text is None:  # Handle case where scrape_and_text fails gracefully
+        if text is None:  # Handle case where scrape_and_text fails 
             return index, "SCRAPE_FAILED", timestamp
             
         return index, text, timestamp
@@ -43,6 +59,7 @@ def process_url(index, url, title):
         # Catch any other unexpected errors
         print(f"\nUnexpected error in worker for index {index} ({url}): {e}")
         return index, f"WORKER_ERROR: {e}", datetime.now()
+
 
 # --- 2. Load and Prepare Data ---
 print(f"Loading data from {INPUT_FILE}...")
@@ -59,7 +76,12 @@ df_1['url'] = df_1['url'].astype(str).str.strip()
 df_1 = df_1[df_1['url'].str.startswith('http')]
 df_1 = df_1.drop_duplicates(subset=['url'])
 
+
 # --- 3. Check for Checkpoint File to Resume ---
+def ensure_indexes():
+    coll_texts.create_index("status")
+    coll_texts.create_index("publish_date")
+
 if os.path.exists(CHECKPOINT_FILE):
     print(f"Found checkpoint file. Loading progress from {CHECKPOINT_FILE}...")
     df_check = pd.read_csv(CHECKPOINT_FILE, sep=';')
@@ -86,6 +108,7 @@ else:
     df_1['time scrapped'] = pd.NaT  # Use NaT (Not-a-Time) for datetimes
     df_1['text'] = pd.NA         # Use pd.NA for missing text
 
+"""
 # --- 4. Scrapping with ThreadPoolExecutor ---
 print(f"Starting scrape with {MAX_WORKERS} workers...")
 
@@ -146,8 +169,9 @@ else:
 
 # --- 5. Final Save ---
 print("\nScraping complete. Saving final file...")
-df_1.to_csv(FINAL_FILE, index=False, sep=';')
+df_1.to_csv(FINAL_NAME, index=False, sep=';')
 
-print(f"All done! Results saved to {FINAL_FILE}")
+print(f"All done! Results saved to {FINAL_NAME}")
 if os.path.exists(CHECKPOINT_FILE):
     print(f"Checkpoint file {CHECKPOINT_FILE} can be deleted if no longer needed.")
+"""
