@@ -43,3 +43,5 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - There is a problem because i was thinking on uploading the scraped_data_checkpoints.csv and the scraped_data_final.csv files in git hub but i cant so i have to use mongoDB
    - I managed to get the data in MongoDB but now, there is not enough space. There are two options here, do a bit of cleaning, bc when we do the scrapping the text is everything that is in the screen, and try to get the actuall text or pay to get more space. (TO DO)
    - Also I still have to figure out how to do the push since somo elements (already eliminated) were bigger than expected.
+   - I am going to create a new function in fun_scraple in order to eliminate the headers and the footers.
+   
