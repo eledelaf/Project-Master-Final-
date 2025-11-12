@@ -41,8 +41,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - Use the TEXTS.csv file and filled out
    - I created scrape_to_csv.py to do that, and saves it in scraped_data_checkpoints.csv and in scraped_data_final.csv
    - There is a problem because i was thinking on uploading the scraped_data_checkpoints.csv and the scraped_data_final.csv files in git hub but i cant so i have to use mongoDB
-   - I managed to get the data in MongoDB but now, there is not enough space. There are two options here, do a bit of cleaning, bc when we do the scrapping the text is everything that is in the screen, and try to get the actuall text or pay to get more space. (TO DO)
-   - Also I still have to figure out how to do the push since somo elements (already eliminated) were bigger than expected.
-   - I am going to create a new function in fun_scraple in order to eliminate the headers and the footers. (TO DO)
-   - Eliminar time_enqueued from mongoDB (TO DO)
-   
+
+   - I managed to get the data in MongoDB but now, there is not enough space. There are two options here, do a bit of cleaning, bc when we do the scrapping the text is everything that is in the screen, and try to get the actuall text or pay to get more space. (TO DO) 
+      - Clean the data before put it into mongoDB, like using the url as the id, or eliminating one of the time stamps (TO DO)
+      - I am going to create a new function in fun_scraple in order to eliminate the headers and the footers. (TO DO)

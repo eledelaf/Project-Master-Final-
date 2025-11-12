@@ -23,3 +23,8 @@ def scrape_and_text(url, filename):
         print(f"Error al intentar acceder a la URL: {e}")
     except Exception as e:
         print(f"Ha ocurrido un error inesperado: {e}")
+
+def clean_middle_article(text, url):
+    # Ive realised that each of the articles start a bit after the first date in this form: 4 March 2025/ 19 Jan 2022/ 26 January 2022
+    # we could eliminate the string that came before the first date the we can find.
+    pass
