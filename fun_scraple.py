@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-import re
-
 def scrape_and_text(url, filename):
     try:
         # Realizar la solicitud HTTP a la URL
@@ -25,8 +23,3 @@ def scrape_and_text(url, filename):
         print(f"Error al intentar acceder a la URL: {e}")
     except Exception as e:
         print(f"Ha ocurrido un error inesperado: {e}")
-
-def clean_middle_article(text, url):
-    # since all of the articles have a date at the beginning, I am going to delete everything that comes before that to save space
-    #patron = re.compile(r'\d{1,2}\s*(?:de\s+)?(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s*(?:de\s+)?\d{4},dateString)
-    pass
