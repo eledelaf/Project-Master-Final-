@@ -81,10 +81,10 @@ def ensure_indexes():
 ensure_indexes()
 
 # --- 3.1 Build a set of known URLs from Mongo in order to skip them ---
-known_ids = {d["_id"] for d in coll_texts.find({}, {"_id": 1}) if isinstance(d.get("_id"), str)}
-known_urls = {d.get("url") for d in coll_texts.find({"url": {"$type": "string"}}, {"url": 1})}
-already_in_mongo = known_ids | {u for u in known_urls if u}
-print(f"Mongo already has {len(already_in_mongo)} URLs.")
+# Simplified this check. Since the URL is the _id, we only need to query the _id field.
+# This is more efficient than checking _id and url fields separately.
+already_in_mongo = {d["_id"] for d in coll_texts.find({}, {"_id": 1}) if isinstance(d.get("_id"), str)}
+print(f"Mongo already has {len(already_in_mongo)} URLs (checking by _id).")
 
 # Get a list of rows that still need to be scraped
 # We use .iterrows() which gives (index, Series)
@@ -119,7 +119,7 @@ for idx, url, title in rows_to_scrape:
         UpdateOne({"_id": url},
                   {"$setOnInsert": {
                       "_id": url,
-                      "url": url,
+                      # "url": url, # --- CHANGED --- Removed redundant url field
                       "title": title,
                       "publish_date": pub,
                       "status": "pending",
@@ -163,7 +163,7 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
             elif isinstance(text, str) and len(text) > 0:
                 update_collection(coll_texts, {
                     "_id": url,
-                    "url": url,
+                    # "url": url, # --- CHANGED --- Removed redundant url field
                     "title": title,
                     "publish_date": publish_date,
                     "text": text,
