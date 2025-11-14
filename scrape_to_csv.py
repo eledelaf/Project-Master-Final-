@@ -14,6 +14,9 @@ from pymongo import UpdateOne
 This script takes the URLS_clean.csv file, scrapes the content using
 multi-threading, and updates the text into mongoDB.
 """
+# no identifica bien los pending o los failed
+# eliminar el url y usar _id
+# no se si necesito time enqued 
 
 # --- 0.1 Configuration ---
 MAX_WORKERS = 8  # Number of threads. Adjust based on your network/CPU.
