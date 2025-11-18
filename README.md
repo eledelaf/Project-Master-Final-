@@ -51,7 +51,6 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       - Lets try newspaper3k, it seems like is working better.
 
    7. Classification model: (TO DO)
-   - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related. 
-   - Manually create a sample of articles that are positive or negative.
+   - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related. (DONE)
+   - Manually create a sample of articles that are positive or negative. (TO DO)
    - Train a TF–IDF + logistic regression (or linear SVM) classifier.
-   
