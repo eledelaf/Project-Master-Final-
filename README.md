@@ -35,14 +35,23 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - Since I had to change the the telegraph to the standard, now we have a new daataset URLS_clean, with those 3 papers.
    - Lets check if the scrapping works in the standard, using Scraple_article.py, it works
 6. 
-   - Make the code work for a large data set, since now it works for just one URL we want to use bucles, and threads to iterate the process (TO DO)
+   - Make the code work for a large data set, since now it works for just one URL we want to use bucles, and threads to iterate the process 
    - Instead of importing the URLS_clean to mongoDB I am going to create a new python file that takes the csv file from my computer and creates a new csv file with the article written on it (scrapple_to_csv.py)
    - In the scrape_to_csv file I took the information form URLS_clean and created the csv file with the columns i needed and added "time scrapped" and "text" that are empty at the moment.
    - Use the TEXTS.csv file and filled out
    - I created scrape_to_csv.py to do that, and saves it in scraped_data_checkpoints.csv and in scraped_data_final.csv
    - There is a problem because i was thinking on uploading the scraped_data_checkpoints.csv and the scraped_data_final.csv files in git hub but i cant so i have to use mongoDB
 
-   - I managed to get the data in MongoDB but now, there is not enough space. There are two options here, do a bit of cleaning, bc when we do the scrapping the text is everything that is in the screen, and try to get the actuall text or pay to get more space. (TO DO) 
+   - I managed to get the data in MongoDB but now, there is not enough space. There are two options here, do a bit of cleaning, bc when we do the scrapping the text is everything that is in the screen, and try to get the actuall text or pay to get more space. 
       - Clean the data before put it into mongoDB, like using the url as the id (Hecho)
-      - or eliminating one of the time stamps (TO DO)
-      - I am going to create a new function in fun_scraple in order to eliminate the headers and the footers. (TO DO)
+      - or eliminating one of the time stamps
+      - I am going to create a new function in fun_scraple in order to eliminate the headers and the footers.
+      - Managed to do all the scrapping but using another scrapping function, trafilatura. Thats the new file fun_scrap_tra.py.
+      - This function is not returning what i would hope for, so i need to find another way to clean a bit the data set.
+      - Lets try newspaper3k, it seems like is working better.
+
+   7. Classification model: (TO DO)
+   - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related. 
+   - Manually create a sample of articles that are positive or negative.
+   - Train a TF–IDF + logistic regression (or linear SVM) classifier.
+   

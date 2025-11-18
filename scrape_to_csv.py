@@ -4,7 +4,7 @@ import time
 import random
 
 from datetime import datetime, timezone
-from fun_scraple import scrape_and_text  # Scrapping function
+from fun_scrap3 import scrape_and_text # Scrapping function
 from tqdm import tqdm  # For a nice progress bar
 from pymongo.mongo_client import MongoClient # To connect to mongo
 from pymongo.errors import PyMongoError
