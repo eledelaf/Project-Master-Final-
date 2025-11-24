@@ -54,3 +54,4 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related. (DONE) classification.py. 
    - Manually create a sample of articles that are positive or negative, approx 800, where 500 are candidates and 300 non candidates. I created manual-classification that gets a sample set of urls from the Texts db and puts them in a new collection (sample_texts), to manually classify those. (manual-clasification)
    - the first classification wasnt great, so i deacided to take out all of the articles that were under the sports, lifestyle, games... sections, so i rewrited classification.py.
+   - We are going to use BERT or a LLM (Make it look for the context) for the classification,since i was looking to create a small data set and classify it myself then we would lose a lot of time. 
