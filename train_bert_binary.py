@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 
 from datasets import Dataset
+from transformers import AutoTokenizer , DataCollatorWithPadding
+
 
 # ------------------ 1. CONFIG ------------------
 
@@ -50,3 +52,20 @@ dataset["validation"] = test_valid["test"]
 dataset["test"] = test_valid["train"]
 
 print(dataset)
+
+# ------------------ 4. TOKENIZER + PREPROCESSING ------------------
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+
+def preprocess_function(examples):
+    titles = examples.get(TITLE_COL, [""] * len(examples[TEXT_COL]))
+    texts = examples[TEXT_COL]
+    combined = [ (t or "") + " " + (x or "") for t, x in zip(titles, texts) ]
+    return tokenizer(
+        combined,
+        truncation=True,
+        max_length=512,
+    )
+
+encoded_dataset = dataset.map(preprocess_function, batched=True)
+data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
