@@ -50,7 +50,8 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       - This function is not returning what i would hope for, so i need to find another way to clean a bit the data set.
       - Lets try newspaper3k, it seems like is working better.
 
-   7. Classification model: (TO DO)
+   7. Classification model:
+   7.1 sample set: 
    - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related. (DONE) classification.py. 
    - the first classification wasnt great, so i deacided to take out all of the articles that were under the sports, lifestyle, games... sections, so i rewrited classification.py.
    - We are only going to use the articles that have url = true.
@@ -65,4 +66,14 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       - 1 = PROTEST if the article’s main focus is a collective, public action (demonstration, march, rally, strike, riot, blockade, occupation, picket, etc.) in which people express political or social claims. The article should describe the event itself (who, where, why, what happened), or its very immediate unfolding (clashes, arrests, dispersal, etc.).
       - 0 = NOT_PROTEST if the article is mainly about elite statements, scandals, normal politics, commentary, or other events where protests are only background or mentioned in passing.
 
+   7.2 Train fine-tune BERT:
+   Bibliografia: Original BERT paper/Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019)./BERT:Pre-training of Deep Bidirectional Transformers for Language Understanding./Proceedings of NAACL-HLT.
+   Bibliografia: DistilBERT paper / model/Sanh, V., Debut, L., Chaumond, J., & Wolf, T. (2019)./DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter./Preprint: https://arxiv.org/abs/1910.01108
+   bibliografia: https://arxiv.org/abs/1910.03771
+   bibliografia: https://huggingface.co/docs/transformers/en/training?utm_source=chatgpt.com
+   https://huggingface.co/docs/transformers/en/main_classes/tokenizer
+   https://huggingface.co/docs/transformers/en/main_classes/trainer
+   https://medium.com/@khang.pham.exxact/text-classification-with-bert-7afaacc5e49b
+   
+   7.3 Control de calidad:
 
