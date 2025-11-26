@@ -66,7 +66,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       - 1 = PROTEST if the article’s main focus is a collective, public action (demonstration, march, rally, strike, riot, blockade, occupation, picket, etc.) in which people express political or social claims. The article should describe the event itself (who, where, why, what happened), or its very immediate unfolding (clashes, arrests, dispersal, etc.).
       - 0 = NOT_PROTEST if the article is mainly about elite statements, scandals, normal politics, commentary, or other events where protests are only background or mentioned in passing.
    In sample_texts_with_labels.csv the column labels is the final classification 
-   - CAMBIAR sample_texts_with_labels PQ LA CLASIFICACION ESTÁ MAL HECHA (TO DO)
+   - Si hay tiempo deberia mejorar el sample set (sample_texts_with_candidate_refined.csv)
 
    7.2 Train fine-tune BERT:
    Bibliografia: Original BERT paper/Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019)./BERT:Pre-training of Deep Bidirectional Transformers for Language Understanding./Proceedings of NAACL-HLT.
@@ -77,5 +77,16 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    https://huggingface.co/docs/transformers/en/main_classes/trainer
    https://medium.com/@khang.pham.exxact/text-classification-with-bert-7afaacc5e49b
 
-   7.3 Control de calidad:
+   We have a sample set of 500, of those 400 has been used to train it, 50 is for test and the other 50 are validation. 
+   It returns:
+      1. Accuracy ~ 0.82 → The model gets about 82% of all test articles right.
+      2. Precision ~ 0.84 → Of everything the model calls “protest”, about 84% really are protest articles, and 16% are false alarms (non-protest articles misclassified as protest).
+      3. Recall ~ 0.87 → Of all the true protest articles in the test set, the model correctly finds about 87%, and misses about 13% (false negatives).
+      4. F1 ~ 0.86 → Overall balance between precision and recall is strong; it’s a solid classifier for a small dataset.
+   - TO DO: Do a quick error analysis looking at a few false positives and false negatives.
+
+   7.4 Do the classification:
+
+   7.5 validar la calisificación?
+
 

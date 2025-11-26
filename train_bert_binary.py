@@ -2,8 +2,14 @@ import numpy as np
 import pandas as pd
 
 from datasets import Dataset
-from transformers import AutoTokenizer , DataCollatorWithPadding
-
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+    DataCollatorWithPadding,
+    TrainingArguments,
+    Trainer,
+)
 
 # ------------------ 1. CONFIG ------------------
 
@@ -108,10 +114,6 @@ training_args = TrainingArguments(
     per_device_eval_batch_size=16,
     num_train_epochs=3,
     weight_decay=0.01,
-    evaluation_strategy="epoch",
-    save_strategy="epoch",
-    load_best_model_at_end=True,
-    metric_for_best_model="f1",
     logging_dir="./logs",
     logging_steps=20,
 )
@@ -125,3 +127,19 @@ trainer = Trainer(
     data_collator=data_collator,
     compute_metrics=compute_metrics,
 )
+
+# ------------------ 7. TRAIN ------------------
+
+trainer.train()
+
+# ------------------ 8. EVALUATE ON TEST ------------------
+
+metrics = trainer.evaluate(encoded_dataset["test"])
+print("Test metrics:", metrics)
+
+# ------------------ 9. SAVE FINAL MODEL ------------------
+
+final_dir = OUTPUT_DIR + "_final"
+trainer.save_model(final_dir)
+tokenizer.save_pretrained(final_dir)
+print(f"Final model saved to: {final_dir}")
