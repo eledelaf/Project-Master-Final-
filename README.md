@@ -52,6 +52,17 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
 
    7. Classification model: (TO DO)
    - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related. (DONE) classification.py. 
-   - Manually create a sample of articles that are positive or negative, approx 800, where 500 are candidates and 300 non candidates. I created manual-classification that gets a sample set of urls from the Texts db and puts them in a new collection (sample_texts), to manually classify those. (manual-clasification)
    - the first classification wasnt great, so i deacided to take out all of the articles that were under the sports, lifestyle, games... sections, so i rewrited classification.py.
+   - We are only going to use the articles that have url = true.
    - We are going to use BERT or a LLM (Make it look for the context) for the classification,since i was looking to create a small data set and classify it myself then we would lose a lot of time. 
+   - b: https://huggingface.co/docs/transformers/en/tasks/sequence_classification?utm_source=chatgpt.com
+   - b: https://huggingface.co/docs/transformers/en/training?utm_source=chatgpt.com
+   - b: https://huggingface.co/docs/transformers/en/model_doc/bert?utm_source=chatgpt.com
+   - I am going to try A-Fine-tuned BERT, if this doesnt work i will try few-shot LLM (or if i have time to do both and compare)
+   - We are going to do a sample set (sample_clasification.py) of 500 articles to train the BERT. The sample set will only take the as posible falses the ones that are url= true and keyword= false, and will take the posible true url = true and key word = true
+   - I have downloaded the sample set (download_from_mongo.py)
+   - I  have defined the articles that are positive: 
+      - 1 = PROTEST if the article’s main focus is a collective, public action (demonstration, march, rally, strike, riot, blockade, occupation, picket, etc.) in which people express political or social claims. The article should describe the event itself (who, where, why, what happened), or its very immediate unfolding (clashes, arrests, dispersal, etc.).
+      - 0 = NOT_PROTEST if the article is mainly about elite statements, scandals, normal politics, commentary, or other events where protests are only background or mentioned in passing.
+
+
