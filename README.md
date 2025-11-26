@@ -65,6 +65,8 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - I  have defined the articles that are positive: 
       - 1 = PROTEST if the article’s main focus is a collective, public action (demonstration, march, rally, strike, riot, blockade, occupation, picket, etc.) in which people express political or social claims. The article should describe the event itself (who, where, why, what happened), or its very immediate unfolding (clashes, arrests, dispersal, etc.).
       - 0 = NOT_PROTEST if the article is mainly about elite statements, scandals, normal politics, commentary, or other events where protests are only background or mentioned in passing.
+   In sample_texts_with_labels.csv the column labels is the final classification 
+   - CAMBIAR sample_texts_with_labels PQ LA CLASIFICACION ESTÁ MAL HECHA (TO DO)
 
    7.2 Train fine-tune BERT:
    Bibliografia: Original BERT paper/Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019)./BERT:Pre-training of Deep Bidirectional Transformers for Language Understanding./Proceedings of NAACL-HLT.
@@ -74,6 +76,6 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    https://huggingface.co/docs/transformers/en/main_classes/tokenizer
    https://huggingface.co/docs/transformers/en/main_classes/trainer
    https://medium.com/@khang.pham.exxact/text-classification-with-bert-7afaacc5e49b
-   
+
    7.3 Control de calidad:
 

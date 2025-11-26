@@ -1,28 +1,38 @@
-import os
 import numpy as np
-from dataclasses import dataclass
 import pandas as pd
-from datasets import load_dataset, ClassLabel
 
-# -------- 1. Config --------
+# ------------------ 1. CONFIG ------------------
 
-CSV_PATH = "sample_texts_with_labels.csv"  # change if needed
-TEXT_COL = "text"          # column with full article text
-TITLE_COL = "title"        # we will concatenate title + text
-LABEL_COL = "label"        # 0 = not protest, 1 = protest
+CSV_PATH = "sample_texts_with_candidate_refined.csv"  # your file
+TEXT_COL = "text"
+TITLE_COL = "title"
+LABEL_COL = "label"  # this is candidate_refined
 
-MODEL_NAME = "distilbert-base-uncased"  # smaller, faster BERT-like model
+MODEL_NAME = "distilbert-base-uncased"
+OUTPUT_DIR = "./bert_protest_binary"
 
-# -------- 2. Load dataset --------
+# ------------------ 2. LOAD + CLEAN CSV ------------------
 
-# Expecting a CSV with at least: title, text, label
-dataset = load_dataset("csv", data_files={"data": CSV_PATH})["data"]
+# Read CSV (default header row is fine)
+df = pd.read_csv(CSV_PATH)
 
-# Ensure labels are integers 0/1
-if LABEL_COL not in dataset.column_names:
-    raise ValueError(f"Column '{LABEL_COL}' not found in CSV. Please add it as 0/1 labels.")
+# Drop old 'candidate' column if present 
+if "candidate" in df.columns:
+    df = df.drop(columns=["candidate"])
 
-# Cast label column to ClassLabel for nicer handling
-unique_labels = sorted(set(dataset[LABEL_COL]))
-num_labels = len(unique_labels)
-print("Unique labels:", unique_labels)
+# Ensure 'candidate_refined' exists
+if "candidate_refined" not in df.columns:
+    raise ValueError("Column 'candidate_refined' not found in CSV.")
+
+# Convert candidate_refined (True/False or 0/1) -> int 0/1
+df["candidate_refined"] = df["candidate_refined"].astype(int)
+
+# Create 'label' column for BERT (0/1)
+df[LABEL_COL] = df["candidate_refined"]
+
+# Optional: drop rows with missing text/title (to avoid weird errors)
+df[TEXT_COL] = df[TEXT_COL].fillna("")
+df[TITLE_COL] = df[TITLE_COL].fillna("")
+
+print("First few cleaned rows:")
+print(df[[TEXT_COL, TITLE_COL, LABEL_COL]].head())
