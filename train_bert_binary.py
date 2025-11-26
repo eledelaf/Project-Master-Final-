@@ -69,3 +69,59 @@ def preprocess_function(examples):
 
 encoded_dataset = dataset.map(preprocess_function, batched=True)
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+
+# ------------------ 5. METRICS ------------------
+# This function tells Hugging Face how to evaluate the model.
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = np.argmax(logits, axis=-1)
+
+    acc = accuracy_score(labels, preds)
+    precision, recall, f1, _ = precision_recall_fscore_support(
+        labels, preds, average="binary"
+    )
+
+    return {
+        "accuracy": acc,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+    }
+
+# ------------------ 6. MODEL + TRAINER ------------------
+
+num_labels = 2
+id2label = {0: "not_protest", 1: "protest"}
+label2id = {"not_protest": 0, "protest": 1}
+
+model = AutoModelForSequenceClassification.from_pretrained(
+    MODEL_NAME,
+    num_labels=num_labels,
+    id2label=id2label,
+    label2id=label2id,
+)
+
+training_args = TrainingArguments(
+    output_dir=OUTPUT_DIR,
+    learning_rate=2e-5,
+    per_device_train_batch_size=8,
+    per_device_eval_batch_size=16,
+    num_train_epochs=3,
+    weight_decay=0.01,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    load_best_model_at_end=True,
+    metric_for_best_model="f1",
+    logging_dir="./logs",
+    logging_steps=20,
+)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=encoded_dataset["train"],
+    eval_dataset=encoded_dataset["validation"],
+    tokenizer=tokenizer,
+    data_collator=data_collator,
+    compute_metrics=compute_metrics,
+)
