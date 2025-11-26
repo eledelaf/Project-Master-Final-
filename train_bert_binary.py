@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from datasets import Dataset
+
 # ------------------ 1. CONFIG ------------------
 
 CSV_PATH = "sample_texts_with_candidate_refined.csv"  # your file
@@ -36,3 +38,15 @@ df[TITLE_COL] = df[TITLE_COL].fillna("")
 
 print("First few cleaned rows:")
 print(df[[TEXT_COL, TITLE_COL, LABEL_COL]].head())
+
+# ------------------ 3. CONVERT TO HF DATASET + SPLIT ------------------
+
+dataset = Dataset.from_pandas(df, preserve_index=False)
+
+# Train/validation/test split: 80/10/10
+dataset = dataset.train_test_split(test_size=0.2, seed=42)
+test_valid = dataset["test"].train_test_split(test_size=0.5, seed=42)
+dataset["validation"] = test_valid["test"]
+dataset["test"] = test_valid["train"]
+
+print(dataset)
