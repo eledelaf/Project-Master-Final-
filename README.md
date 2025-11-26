@@ -84,6 +84,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       3. Recall ~ 0.87 → Of all the true protest articles in the test set, the model correctly finds about 87%, and misses about 13% (false negatives).
       4. F1 ~ 0.86 → Overall balance between precision and recall is strong; it’s a solid classifier for a small dataset.
    - TO DO: Do a quick error analysis looking at a few false positives and false negatives.
+   - TO DO: no lo puedo subir a git pq bert_protest_binary/checkpoint-150/optimizer.pt is 510.91 MB; this exceeds GitHub's file size limit of 100.00 MB 
 
    7.4 Do the classification:
 
