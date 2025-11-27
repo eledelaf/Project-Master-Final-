@@ -84,7 +84,29 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       3. Recall ~ 0.87 → Of all the true protest articles in the test set, the model correctly finds about 87%, and misses about 13% (false negatives).
       4. F1 ~ 0.86 → Overall balance between precision and recall is strong; it’s a solid classifier for a small dataset.
    - TO DO: Do a quick error analysis looking at a few false positives and false negatives.
-   - TO DO: no lo puedo subir a git pq bert_protest_binary/checkpoint-150/optimizer.pt is 510.91 MB; this exceeds GitHub's file size limit of 100.00 MB 
+   - TO DO: no lo puedo subir a git pq bert_protest_binary/checkpoint-150/optimizer.pt is 510.91 MB; this exceeds GitHub's file size limit of 100.00 MB
+   - ERROR GITHUB:
+   > git push origin main:main
+      remote: error: Trace: 3dd4b00f48f997f2277a24d2d0a4729d959a19ec21485dd11ff8dceae4fb8572        
+      remote: error: See https://gh.io/lfs for more information.        
+      remote: error: File bert_protest_binary/checkpoint-150/model.safetensors is 255.43 MB; this exceeds GitHub's file size limit of 100.00 MB        
+      remote: error: File bert_protest_binary/checkpoint-150/optimizer.pt is 510.91 MB; this exceeds GitHub's file size limit of 100.00 MB        
+      remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        
+      To github.com:eledelaf/Project-Master.git
+      ! [remote rejected] main -> main (pre-receive hook declined)
+      error: failed to push some refs to 'github.com:eledelaf/Project-Master.git'
+      He hecho esto:
+      (.venv) (base) elenadelafuente@MacBook-Air-de-Elena Project-Master % git rm --cached bert_protest_binary/checkpoint-150/model.safetensors
+      rm 'bert_protest_binary/checkpoint-150/model.safetensors'
+      (.venv) (base) elenadelafuente@MacBook-Air-de-Elena Project-Master % git rm --cached bert_protest_binary/checkpoint-150/optimizer.pt
+      rm 'bert_protest_binary/checkpoint-150/optimizer.pt'
+      (.venv) (base) elenadelafuente@MacBook-Air-de-Elena Project-Master % git commit --amend -CHEAD
+      [main 61d90f8] ns
+      Date: Thu Nov 27 16:02:42 2025 +0000
+      3 files changed, 0 insertions(+), 0 deletions(-)
+      delete mode 100644 bert_protest_binary/checkpoint-150/model.safetensors
+      delete mode 100644 bert_protest_binary/checkpoint-150/optimizer.pt
+      (.venv) (base) elenadelafuente@MacBook-Air-de-Elena Project-Master % git push
 
    7.4 Do the classification:
 
