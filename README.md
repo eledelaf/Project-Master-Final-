@@ -219,7 +219,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       Test metrics: {'eval_loss': 0.2740192115306854, 'eval_accuracy': 0.88, 'eval_precision': 0.84375, 'eval_recall': 0.9642857142857143, 'eval_f1': 0.9, 'eval_runtime': 1.6952, 'eval_samples_per_second': 29.496, 'eval_steps_per_second': 2.36, 'epoch': 3.0}
       
    7.4 Do the classification:
-   I have to get the info from MONGODB and do the classification, and update the mongo db database to get the classification done
+   I have to get the info from MONGODB and do the classification, and update the mongo db database to get the classification done (bert_classification.py)
 
    7.5 validar la calisificación?
 
