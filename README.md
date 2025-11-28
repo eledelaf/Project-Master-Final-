@@ -213,9 +213,13 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       In this case is not classifying it well becasue the scrapping failed and we only have a small fracment of the article.
 
       Some of the False negatives are errors on the labeling, so i have to change that (cambiar_csv.py). Also the other error that we are getting is that the model does not asumes a pacific protest as a protest since we are focusing on riots and violence.
-      
 
+      Test metrics after doing some changes on the data set: 
+      Test metrics: {'eval_loss': 0.32307156920433044, 'eval_accuracy': 0.8, 'eval_precision': 0.8, 'eval_recall': 0.8571428571428571, 'eval_f1': 0.8275862068965517, 'eval_runtime': 1.4704, 'eval_samples_per_second': 34.004, 'eval_steps_per_second': 2.72, 'epoch': 3.0}
+      Test metrics: {'eval_loss': 0.2740192115306854, 'eval_accuracy': 0.88, 'eval_precision': 0.84375, 'eval_recall': 0.9642857142857143, 'eval_f1': 0.9, 'eval_runtime': 1.6952, 'eval_samples_per_second': 29.496, 'eval_steps_per_second': 2.36, 'epoch': 3.0}
+      
    7.4 Do the classification:
+   I have to get the info from MONGODB and do the classification, and update the mongo db database to get the classification done
 
    7.5 validar la calisificación?
 
