@@ -13,7 +13,7 @@ from transformers import (
 
 # ------------------ 1. CONFIG ------------------
 
-CSV_PATH = "sample_texts_with_candidate_refined.csv"  # your file
+CSV_PATH = "sample_texts_with_candidate_refined_clean.csv"  # your file
 TEXT_COL = "text"
 TITLE_COL = "title"
 LABEL_COL = "label"  # this is candidate_refined
@@ -143,3 +143,48 @@ final_dir = OUTPUT_DIR + "_final"
 trainer.save_model(final_dir)
 tokenizer.save_pretrained(final_dir)
 print(f"Final model saved to: {final_dir}")
+
+# ------------------ 10. ERROR ANALYSIS: FALSE POSITIVES / FALSE NEGATIVES ------------------
+
+import pandas as pd
+import numpy as np
+
+# 1) Get the raw (non-tokenized) test split and the encoded test split
+test_raw = dataset["test"]               # original fields: title, text, label, ...
+test_encoded = encoded_dataset["test"]   # tokenized version used by the model
+
+# 2) Predict on the test set
+pred_output = trainer.predict(test_encoded)
+logits = pred_output.predictions
+true_labels = pred_output.label_ids
+pred_labels = np.argmax(logits, axis=-1)
+
+# 3) Build a DataFrame with useful info
+df_test = pd.DataFrame({
+    "_id": test_raw["_id"],
+    "title": test_raw["title"],
+    "text": test_raw["text"],
+    "true_label": true_labels,
+    "pred_label": pred_labels,
+})
+
+# 4) False positives: model says "protest" (1) but true label is 0
+false_pos = df_test[(df_test["true_label"] == 0) & (df_test["pred_label"] == 1)]
+
+# 5) False negatives: model says "not protest" (0) but true label is 1
+false_neg = df_test[(df_test["true_label"] == 1) & (df_test["pred_label"] == 0)]
+
+print("\nNumber of false positives:", len(false_pos))
+print("Number of false negatives:", len(false_neg))
+
+print("\n--- Sample false positives (model thought they were protests, but labels say no) ---")
+for idx, row in false_pos.head(5).iterrows():
+    print(f"\nURL: {row['_id']}")
+    print("TITLE:", row["title"])
+    print("TRUE LABEL:", row["true_label"], "PRED:", row["pred_label"])
+
+print("\n--- Sample false negatives (real protests that the model missed) ---")
+for idx, row in false_neg.head(5).iterrows():
+    print(f"\nURL: {row['_id']}")
+    print("TITLE:", row["title"])
+    print("TRUE LABEL:", row["true_label"], "PRED:", row["pred_label"])

@@ -107,6 +107,113 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       delete mode 100644 bert_protest_binary/checkpoint-150/model.safetensors
       delete mode 100644 bert_protest_binary/checkpoint-150/optimizer.pt
       (.venv) (base) elenadelafuente@MacBook-Air-de-Elena Project-Master % git push
+      No se si las cosas que he eliminado son importantes
+      me ha vuelto a dar este error:
+      > git push origin main:main
+      remote: error: Trace: aa2f1fee306ba2217bffbfa0d2a12cf9feaf162a722b3c3c662649ce0efc409f        
+      remote: error: See https://gh.io/lfs for more information.        
+      remote: error: File bert_protest_binary/checkpoint-150/model.safetensors is 255.43 MB; this exceeds GitHub's file size limit of 100.00 MB        
+      remote: error: File bert_protest_binary/checkpoint-150/optimizer.pt is 510.91 MB; this exceeds GitHub's file size limit of 100.00 MB        
+      remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        
+      To github.com:eledelaf/Project-Master.git
+       ! [remote rejected] main -> main (pre-receive hook declined)
+      error: failed to push some refs to 'github.com:eledelaf/Project-Master.git'
+      - If BERT does not work out: https://www.kaggle.com/code/mehmetlaudatekman/text-classification-svm-explained
+      - Error analysis
+      This are the False positives and False negative:
+      Number of false positives: 5
+      Number of false negatives: 5
+
+      --- Sample false positives (model thought they were protests, but labels say no) ---
+
+      URL: https://www.dailymail.co.uk/news/article-11449565/Morgan-Freeman-dominates-World-Cup-opening-ceremony-2022.html?ns_mchannel=rss&ito=1490&ns_campaign=1490
+      TITLE: Qatar World Cup: Rows of empty seats as 'fans' leave early and Morgan Freeman hosts opening ceremony
+      TRUE LABEL: 0 PRED: 1
+
+      URL: https://www.dailymail.co.uk/news/article-10619389/Kyrsten-Sinema-told-Biden-NOT-come-Arizona-signed-COVID-rescue-plan.html
+      TITLE: Kyrsten Sinema told Biden NOT to come to Arizona after he signed the COVID rescue plan
+      TRUE LABEL: 0 PRED: 1
+
+      URL: https://www.dailymail.co.uk/news/article-9990639/Justice-Stephen-Breyer-calls-SCOTUS-decision-allow-Texas-abortion-ban-bad.html?ns_mchannel=rss&ns_campaign=1490&ito=1490
+      TITLE: Justice Stephen Breyer calls SCOTUS decision to allow Texas abortion ban 'very bad'
+      TRUE LABEL: 0 PRED: 1
+
+      URL: https://www.theguardian.com/world/2023/feb/08/turkey-and-syria-earthquake-what-we-know-so-far-on-day-three
+      TITLE: Turkey and Syria earthquake: what we know so far on day three
+      TRUE LABEL: 0 PRED: 1
+
+      URL: https://www.dailymail.co.uk/news/article-8614877/Shocking-moment-partygoers-throw-objects-police-illegal-cookout-rave-Kent-beach.html?ns_mchannel=rss&ito=1490&ns_campaign=1490
+      TITLE: Shocking moment partygoers throw objects at police at illegal 'cookout' rave on Kent beach
+      TRUE LABEL: 0 PRED: 1
+
+      From the False postive we can see the following:
+      1. False positives (model says protest = 1, label says 0)
+      1) Qatar World Cup opening ceremony
+      Rows of empty seats as 'fans' leave early… opening ceremony
+      Big crowd, stadium, “rows of empty seats” → looks like an event, but not a protest.
+      Model probably got triggered by: crowd / stadium context, maybe words like “fans”, “leave”, “boos”, etc. in the text.
+      Conclusion: genuine false positive. Not a protest by your definition.
+      2) Kyrsten Sinema / Biden in Arizona
+      Told Biden NOT to come… after he signed the COVID rescue plan
+      This is elite politics / strategy, not people in the streets.
+      No collective public claim-making event.
+      Conclusion: model overfits on terms like Biden, COVID, Arizona and maybe “rally” or “visit” in the text → another real FP.
+      3) Justice Breyer on Texas abortion ban
+      SCOTUS decision to allow Texas abortion ban 'very bad'
+      Again, this is judicial / elite commentary, not an on-the-ground protest.
+      There might be protest mentions (people protesting the law), but they’re background, not the main focus.
+      Conclusion: good that your label is 0. Model is probably keying too hard on “abortion ban” + maybe “protests” somewhere in text→FP.
+      4) Turkey and Syria earthquake – day three
+      Earthquake: what we know so far on day three
+      Disaster coverage. There might be mentions of anger/fury, but the core is natural disaster, not protest event.
+      Model might be confused if text has “crowds gather”, “anger grows”, “looting” etc. → looks protest-ish lexically.
+      Conclusion: another false positive. This shows the model sometimes confuses riot/chaos/disaster with protest.
+      5) Partygoers throwing objects at police at illegal rave
+      …throw objects at police at illegal 'cookout' rave on Kent beach
+      This one is interesting.
+      Is this a protest? Probably no by your strict definition:
+      It’s an illegal party / rave, not a political or social claim.
+      Yes, there’s collective action and confrontation with police, but no clear grievance or demand.
+      The model sees: “throw objects at police”/“illegal”/“partygoers” / crowd → looks a lot like a riot event, so it says “1”.
+      Conclusion: From a political violence perspective this is “contentious crowd event”, but for PEA-protest you decided to require claim-making, so it’s a false positive.
+      Pattern in FPs
+      Your false positives are: crowd + police + conflict (rave, possibly earthquake chaos), or highly politicised topics without an actual street event (SCOTUS, Sinema, etc.). So the model has learned “protest-like situations”, but not always your stricter “protest event” boundary. That’s normal and actually not a disaster – your definition is narrower than “any public conflict”.
+
+      --- Sample false negatives (real protests that the model missed) ---
+
+      URL: https://www.dailymail.co.uk/news/article-11341215/How-multimillionaire-Steve-Bannon-went-White-House-jail-sentence.html?ns_mchannel=rss&ns_campaign=1490&ito=1490
+      TITLE: How the multimillionaire Steve Bannon went from the White House to jail sentence
+      TRUE LABEL: 1 PRED: 0
+
+      URL: https://www.theguardian.com/world/2020/aug/17/la-caravana-del-diablo-a-migrant-caravan-in-mexico-photo-essay
+      TITLE: La Caravana del Diablo: a migrant caravan in Mexico – photo essay
+      TRUE LABEL: 1 PRED: 0
+
+      URL: https://www.dailymail.co.uk/news/article-8509647/Goat-trim-Mountain-goats-form-orderly-queue-outside-barbers-Welsh-town.html?ns_mchannel=rss&ito=1490&ns_campaign=1490
+      TITLE: Goat to get a trim! Mountain goats form orderly queue outside barbers in Welsh town
+      TRUE LABEL: 1 PRED: 0
+
+      URL: https://www.theguardian.com/environment/2021/jul/03/mount-rushmore-south-dakota-indigenous-americans
+      TITLE: The battle for Mount Rushmore: ‘It should be turned into something like the Holocaust Museum’
+      TRUE LABEL: 1 PRED: 0
+      In your error list it was:
+      TRUE LABEL: 1, PRED: 0
+      I would keep it as 1 and maybe even mark it in your notes as:
+      “Protest article with broader contextual/historical content.”
+      This is a good example for your thesis of:
+      The kind of nuanced protest coverage you care about, and
+      A type of article that BERT can sometimes miss (false negative), because the word “protest” / “march” may appear relatively few times, surrounded by a lot of historical and political explanation.
+      You can even mention it explicitly in your “Error analysis” section as a case where:
+      The model struggled with an article that blends event description + structural context, even though it clearly fits your protest-event definition.
+      If you want, we can go through the migrant caravan article next and decide if you want that one labelled 1 or 0, so your codebook stays consistent.
+
+      URL: https://www.standard.co.uk/news/politics/arrests-police-protests-london-palestine-israel-arms-b1154930.html
+      TITLE: Three arrests as police deal with 'number of protests' in Westminster
+      TRUE LABEL: 1 PRED: 0
+      In this case is not classifying it well becasue the scrapping failed and we only have a small fracment of the article.
+
+      Some of the False negatives are errors on the labeling, so i have to change that (cambiar_csv.py). Also the other error that we are getting is that the model does not asumes a pacific protest as a protest since we are focusing on riots and violence.
+      
 
    7.4 Do the classification:
 
