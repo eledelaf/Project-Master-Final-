@@ -74,9 +74,10 @@ EXCLUDED_URL_PREFIXES = [
     "https://www.standard.co.uk/going-out",
     "https://www.standard.co.uk/homesandproperty",
     "https://www.standard.co.uk/comment",
-    "https://www.standard.co.uk/esmagazine"
-]
-
+    "https://www.standard.co.uk/esmagazine",
+    "https://www.standard.co.uk/going-out/restaurants",
+    "https://www.standard.co.uk/reveller/restaurants"
+    ]
 NON_PROTEST_URL_REGEX = re.compile(
     r"^(?:" + "|".join(re.escape(p) for p in EXCLUDED_URL_PREFIXES) + r")"
 )

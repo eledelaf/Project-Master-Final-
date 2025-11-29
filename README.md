@@ -18,6 +18,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
 2. Data Cleaning
    - Using the script FirstQuery.py, I cleaned the dataset to keep only the necessary columns and filter for the newspapers of interest: Daily Mail, The Telegraph, and The Guardian.
    - The Times was not included because it did not appear in the MediaCloud dataset.
+   - I created a filter to not scrape the urls of the articles that are in the sports/restaurants/cinema/gossip/travel sections.
      
 3. Web Scraping Implementation
    - I created the Python file Scraple_article.py, which takes a single URL and extracts the full article text, saving it as a Word document.
@@ -231,6 +232,19 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    * Borderline non-protest: bert_protest_label = 0 and 0.5 ≤ score < 0.8
    After that we are goin to get a sample of 30 articles of each section and check manually. (make_bert_eval_sample.py)
    We will add a human label on each of them and then compare them to the BERT model label.
+   - EL MODELO NO PARECE ESTAR FUNCIONANDO (TO DO):
+   COSAS A MEJORAR, HACER UNA LIMPIEZA DE LOS URLS ANTES DE HACER EL SCRAPPING
+   MEJORAR EL SET PARA ENTRENAR EL MODELO
+   TODOS LOS ARTICULOS QUE HAYA CLASSIFICADO MANUALMENTE LOS TENGO QUE PONER EN MONGO Y ASÍ VOY HACIENDO EL SAMPLE SET (TRAIN)
+   BORRAR TODOS LOS ARTICLULOS QUE EL SCRAPPING SEA MUY CORTO (por que el scrapping no sale bien?)
+   BORRAR TODOS LOS ARTICULOS CON EL TITULO ASI: "News Headlines |..."
+   BORRAR TODOS LOS ARTICULOS CON UN TITULO ASI: "Tuesday briefing:..."
+   BORRAR LOS ARTICULOS QUE SE VEAN ASI: (por que estoy teniendo este problema?)
+   "Allow Google Search
+   To use the search feature, we need your consent to load Google Custom Search, which may use cookies or similar technologies. Please click 'Allow and Continue' below to enable search. See our privacy policy for more information.
+   Allow and Continue"
 
-
+   PREGUNTAR A ALESSANDRO QUE MODELO USAR PARA LA CLASSIFICACION 
+   ARREGLAR LO DE SUBIR LAS COSAS EN GITHUB
+   
 
