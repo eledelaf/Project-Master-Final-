@@ -223,5 +223,13 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    I am only going to classify the url_candidate = True
 
    7.5 validar la calisificación?
+   The first step are the test metric from the trainig model file 
+   We are going to separate the data base depending on the bert_score.
+   * High-confidence protest: bert_protest_label = 1 and bert_protest_score ≥ 0.8
+   * Borderline protest: bert_protest_label = 1 and 0.5 ≤ score < 0.8
+   * High-confidence non-protest: bert_protest_label = 0 and score ≥ 0.8  
+   * Borderline non-protest: bert_protest_label = 0 and 0.5 ≤ score < 0.8
+   After that we are goin gto get a sample of 30 articles of each section and check manually. We will add a human label on each of them and then compare them to the BERT model label.
+
 
 
