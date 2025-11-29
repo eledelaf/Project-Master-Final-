@@ -220,6 +220,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       
    7.4 Do the classification:
    I have to get the info from MONGODB and do the classification, and update the mongo db database to get the classification done (bert_classification.py)
+   I am only going to classify the url_candidate = True
 
    7.5 validar la calisificación?
 
