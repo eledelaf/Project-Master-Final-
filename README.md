@@ -23,9 +23,11 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
 3. Web Scraping Implementation
    - I created the Python file Scraple_article.py, which takes a single URL and extracts the full article text, saving it as a Word document.
    - Next, I developed fun_scraple.py, which defines the same scraping process as a reusable function.
+   - I had to do fun_scrap3.py using Article to do the scrapping
+   conectar_mongo
 
 4. Integration with MongoDB
-   - The fun_scraple() function is called from conectar_mongo.py.
+   - The fun_scraple() function is called from conectar_mongo.py (lo elimine pq hice scrape_to_csv.py)
    - This script retrieves URLs from the MongoDB collection, runs the scraping function for each, and is designed to store the resulting articles directly in MongoDB for future processing.
    - Managed to get the URL from mongo, do the scrapping, and update the text to a new library in mongoDB.
 

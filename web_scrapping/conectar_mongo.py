@@ -4,6 +4,8 @@ from pymongo.server_api import ServerApi
 from fun_scrap3 import scrape_and_text
 import time
 
+# I dont know if i am using this code
+
 uri = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
 def first(collection):
     #Devuelve el titulo y el url del primer elemento de una collecion de mongo
