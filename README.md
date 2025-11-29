@@ -229,7 +229,8 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    * Borderline protest: bert_protest_label = 1 and 0.5 ≤ score < 0.8
    * High-confidence non-protest: bert_protest_label = 0 and score ≥ 0.8  
    * Borderline non-protest: bert_protest_label = 0 and 0.5 ≤ score < 0.8
-   After that we are goin gto get a sample of 30 articles of each section and check manually. We will add a human label on each of them and then compare them to the BERT model label.
+   After that we are goin to get a sample of 30 articles of each section and check manually. (make_bert_eval_sample.py)
+   We will add a human label on each of them and then compare them to the BERT model label.
 
 
 
