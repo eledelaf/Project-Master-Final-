@@ -55,8 +55,8 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
 
    7. Classification model:
    7.1 sample set: 
-   - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related. (DONE) classification.py. 
-   - the first classification wasnt great, so i deacided to take out all of the articles that were under the sports, lifestyle, games... sections, so i rewrited classification.py.
+   - First I am going to do a pre-filter with some more key words to have a group of possible articles that are more likely to be protest related.  classification.py. 
+   - the first classification wasnt great, so i deacided to take out all of the articles that were under the sports, lifestyle, games... sections, so i rewrited classification.py. (I changed this to do the url classification before the scrapping)
    - We are only going to use the articles that have url = true.
    - We are going to use BERT or a LLM (Make it look for the context) for the classification,since i was looking to create a small data set and classify it myself then we would lose a lot of time. 
    - b: https://huggingface.co/docs/transformers/en/tasks/sequence_classification?utm_source=chatgpt.com
