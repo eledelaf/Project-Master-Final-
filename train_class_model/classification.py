@@ -12,12 +12,10 @@ Text keywords:
 # --- 1. Keyword-based text filter ---
 
 PROTEST_TERMS = [
-    "protest", "protests", "protester", "protesters",
-    "demonstration", "demonstrations", "demo",
+    "protester", "demonstration", "demonstrations", "demo",
     "rally", "march", "sit-in", "occupation",
     "blockade", "strike", "walkout", "picket", "picket line",
-    "riot", "riots",
-    "clash with police", "clashes with police",
+    "riot", "clash with police", "clashes with police",
     "took to the streets", "mass protest", "mass demonstration"
 ]
 
