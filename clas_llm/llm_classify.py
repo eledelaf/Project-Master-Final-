@@ -1,17 +1,26 @@
+# export OPENAI_API_KEY="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"
 import os
 import json
 import time
 from typing import Optional, Dict, Any
 
 from dotenv import load_dotenv
-from openai import OpenAI
-import openai  # for exception classes
+from openai import OpenAI  # NEW
 
+# Load variables from .env if present
 load_dotenv()
 
-client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY")
-)
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
+if not OPENAI_API_KEY:
+    raise RuntimeError(
+        "OPENAI_API_KEY is not set. "
+        "Set it as an env var (export OPENAI_API_KEY=\"...\") "
+        "or in a .env file."
+    )
+
+# New-style client
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 SYSTEM_INSTRUCTIONS = """
 You are a classifier for news articles about protests.
@@ -23,9 +32,9 @@ or if protests are only mentioned in passing.
 Labeling rules:
 
 - 1 = PROTEST:
-  The article’s main focus is a collective, public action in which people express
-  political or social claims. The article should describe the event itself
-  (who, where, why, what happened), or its very immediate unfolding
+  The article’s main focus is a collective, public action in which people
+  express political or social claims. The article should describe the event
+  itself (who, where, why, what happened), or its very immediate unfolding
   (clashes, arrests, dispersal, numbers of participants, etc.).
 
 - 0 = NOT_PROTEST:
@@ -48,58 +57,79 @@ You must output STRICT JSON with keys:
 - "reason": short text explanation (1-3 sentences)
 """
 
+
+def _extract_json(raw_text: str) -> Dict[str, Any]:
+    """
+    Try to parse JSON from the model output.
+    If the model accidentally adds extra text around the JSON,
+    we take the substring between the first '{' and the last '}'.
+    """
+    raw_text = raw_text.strip()
+    try:
+        return json.loads(raw_text)
+    except json.JSONDecodeError:
+        start = raw_text.find("{")
+        end = raw_text.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            json_str = raw_text[start:end + 1]
+            return json.loads(json_str)
+        raise
+
+
 def classify_article_with_llm(
     title: str,
     text: str,
-    model: str = "gpt-4o-mini",
+    model: str = "gpt-4o-mini",  # change model name if needed
     max_retries: int = 3,
 ) -> Optional[Dict[str, Any]]:
     """
-    Call the LLM to classify a single article as PROTEST/NOT_PROTEST.
+    Call the LLM (chat completion) to classify a single article.
 
-    Returns a dict like:
-      {"label": 1, "label_name": "PROTEST", "confidence": 0.92, "reason": "..."}
-    or None if it fails.
+    Returns a dict:
+      {"label": 1, "label_name": "PROTEST",
+       "confidence": 0.92, "reason": "..."}
+    or None if it fails or text is too short.
     """
 
-    # Short-circuit if text is too short / empty
     if not text or len(text.strip()) < 200:
-        # You can choose to return None or treat very-short items as NOT_PROTEST.
+        # Too short / likely bad scrape -> skip
         return None
 
-    # Truncate very long texts so tokens don't explode (adjust as needed)
     max_chars = 4000
     truncated_text = text[:max_chars]
 
-    article_input = f"""
+    user_prompt = f"""
 Title: {title}
 
 Article text:
 \"\"\"{truncated_text}\"\"\"
 
-Decide if this article is PROTEST (1) or NOT_PROTEST (0) following the rules.
-Return ONLY a JSON object with keys: label, label_name, confidence, reason.
+Decide if this article is PROTEST (1) or NOT_PROTEST (0)
+following the rules in the system instructions.
+
+Return ONLY a JSON object with keys:
+  "label", "label_name", "confidence", "reason".
 """
 
     for attempt in range(max_retries):
         try:
-            response = client.responses.create(
+            # Use the new client-style chat completions API
+            response = client.chat.completions.create(
                 model=model,
-                instructions=SYSTEM_INSTRUCTIONS,
-                input=article_input,
-                response_format={"type": "json_object"},
+                messages=[
+                    {"role": "system", "content": SYSTEM_INSTRUCTIONS},
+                    {"role": "user", "content": user_prompt},
+                ],
                 temperature=0.0,  # deterministic
             )
 
-            # responses.create has a handy helper:
-            raw_text = response.output_text  # JSON string
-            result = json.loads(raw_text)
+            # New-style response object
+            raw_text = response.choices[0].message.content
+            result = _extract_json(raw_text)
 
-            # Basic sanity checks
             if "label" not in result or "label_name" not in result:
                 raise ValueError(f"Missing keys in LLM output: {result}")
 
-            # Force types / values just in case
             label = int(result["label"])
             if label not in (0, 1):
                 raise ValueError(f"Invalid label value: {label}")
@@ -107,25 +137,24 @@ Return ONLY a JSON object with keys: label, label_name, confidence, reason.
             result["label"] = label
             result["label_name"] = "PROTEST" if label == 1 else "NOT_PROTEST"
 
-            # Coerce confidence
+            # Normalise confidence
             try:
                 conf = float(result.get("confidence", 0.5))
             except (TypeError, ValueError):
                 conf = 0.5
             result["confidence"] = max(0.0, min(1.0, conf))
 
+            # Clean up reason
+            reason = (result.get("reason") or "").strip()
+            result["reason"] = reason
+
             return result
 
-        except (openai.RateLimitError, openai.APIConnectionError) as e:
-            # Simple backoff and retry
-            wait_seconds = 5 * (attempt + 1)
-            print(f"[LLM] Rate/connection error: {e}. Retrying in {wait_seconds}s...")
-            time.sleep(wait_seconds)
-
         except Exception as e:
-            print(f"[LLM] Error classifying article: {e}")
-            # If JSON parsing etc fails, retry once or twice, then give up
-            time.sleep(2)
+            wait_seconds = 5 * (attempt + 1)
+            print(f"[LLM] Error classifying article (attempt {attempt+1}): {e}")
+            print(f"      Retrying in {wait_seconds}s...")
+            time.sleep(wait_seconds)
 
     print("[LLM] Failed after retries, returning None.")
     return None

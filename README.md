@@ -254,5 +254,9 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    
 8. Train the LLM model for classification (class_llm)
 - descargar: pip install openai pymongo python-dotenv tqdm
+- OPEN IA API KEY: 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
+
 - llm_classify.py is going to be the classifier using llms 
+- i am going to create an script that uses the llm_classify.py and uploads that to mongo (run_llm.py)
+
 
