@@ -3,15 +3,10 @@ from pymongo.errors import PyMongoError
 import re
 
 """
-Pre-filter for possible protest articles using two levels:
-
-  1) URL filter:
-       url_candidate = False   if URL starts with one of the EXCLUDED_URL_PREFIXES
-       url_candidate = True    otherwise
-
-  2) Text keywords (only if url_candidate = True):
-       keyword_candidate = True  if protest terms in title/text
-       keyword_candidate = False otherwise
+Pre-filter for possible protest articles using 
+Text keywords:
+    keyword_candidate = True  if protest terms in title/text
+   keyword_candidate = False otherwise
 """
 
 # --- 1. Keyword-based text filter ---
@@ -55,7 +50,7 @@ for doc in cursor:
     batch.append(
         UpdateOne(
             {"_id": doc["_id"]},
-            {"keyword_candidate": keyword_candidate} # He cambiado esto pero no se si esta bien 
+            {"$set": {"keyword_candidate": keyword_candidate,} }
         )
     )
 

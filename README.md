@@ -235,16 +235,16 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    After that we are goin to get a sample of 30 articles of each section and check manually. (make_bert_eval_sample.py)
    We will add a human label on each of them and then compare them to the BERT model label.
    - EL MODELO NO PARECE ESTAR FUNCIONANDO (TO DO):
-   COSAS A MEJORAR, HACER UNA LIMPIEZA DE LOS URLS ANTES DE HACER EL SCRAPPING
-   MEJORAR EL SET PARA ENTRENAR EL MODELO
-   TODOS LOS ARTICULOS QUE HAYA CLASSIFICADO MANUALMENTE LOS TENGO QUE PONER EN MONGO Y ASÍ VOY HACIENDO EL SAMPLE SET (TRAIN)
+   COSAS A MEJORAR, HACER UNA LIMPIEZA DE LOS URLS ANTES DE HACER EL SCRAPPING (DONE)
+   BORRAR TODOS LOS ARTICULOS CON UN TITULO ASI: "Tuesday briefing:..."(DONE)
+   BORRAR TODOS LOS ARTICULOS CON EL TITULO ASI: "News Headlines |..." (DONE)
    BORRAR TODOS LOS ARTICLULOS QUE EL SCRAPPING SEA MUY CORTO (por que el scrapping no sale bien?)
-   BORRAR TODOS LOS ARTICULOS CON EL TITULO ASI: "News Headlines |..."
-   BORRAR TODOS LOS ARTICULOS CON UN TITULO ASI: "Tuesday briefing:..."
    BORRAR LOS ARTICULOS QUE SE VEAN ASI: (por que estoy teniendo este problema?)
    "Allow Google Search
    To use the search feature, we need your consent to load Google Custom Search, which may use cookies or similar technologies. Please click 'Allow and Continue' below to enable search. See our privacy policy for more information.
    Allow and Continue"
+
+   TODOS LOS ARTICULOS QUE HAYA CLASSIFICADO MANUALMENTE LOS TENGO QUE PONER EN MONGO Y ASÍ VOY HACIENDO EL SAMPLE SET (TRAIN)
 
    PREGUNTAR A ALESSANDRO QUE MODELO USAR PARA LA CLASSIFICACION 
    ARREGLAR LO DE SUBIR LAS COSAS EN GITHUB

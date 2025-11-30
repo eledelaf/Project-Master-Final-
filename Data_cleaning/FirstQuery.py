@@ -51,8 +51,35 @@ EXCLUDED_URL_PREFIXES = [
     "https://www.standard.co.uk/comment",
     "https://www.standard.co.uk/esmagazine",
     "https://www.standard.co.uk/going-out/restaurants",
-    "https://www.standard.co.uk/reveller/restaurants"
+    "https://www.standard.co.uk/reveller/restaurants",
+    "https://www.standard.co.uk/escapist",
+    "https://www.standard.co.uk/insider",
+    "https://www.standard.co.uk/shopping"
 ]
+
+def is_excluded_title(title: str) -> bool:
+    if not isinstance(title, str):
+        return False
+    t = title.strip().lower()
+
+    # 1) "News Headlines | ..." or similar
+    if t.startswith("news headlines"):
+        return True
+    if t.startswith("morning headlines"):
+        return True
+    if t.startswith("evening headlines"):
+        return True
+
+    # 2) "<weekday> briefing: ..." or any "briefing:" pattern
+    # E.g. "Tuesday briefing: ...", "Monday briefing: ..."
+    if " briefing:" in t:
+        return True
+    
+    if "photos of the day" in t:
+        return True 
+    
+    return False
+
 
 # ---------------------------------------------------------------------
 # 1. Load raw URLs from MediaCloud
@@ -94,6 +121,13 @@ df_clean = df_clean.reset_index(drop=True)
 print(df_clean)
 
 # ---------------------------------------------------------------------
-# 4. Save cleaned URLs
+# 4. Exclude Titles like:  News Headlines or Tuesday briefing
+# ---------------------------------------------------------------------
+# We drop any row where 'title' starts with one of the EXCLUDED_TITLES
+mask_keep_title = ~df_clean["title"].apply(is_excluded_title)
+df_clean = df_clean[mask_keep_title]
+
+# ---------------------------------------------------------------------
+# 5. Save cleaned URLs
 # ---------------------------------------------------------------------
 df_clean.to_csv("web_scrapping/URLs_clean.csv", sep=";", index=False)
