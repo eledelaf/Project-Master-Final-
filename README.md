@@ -64,7 +64,8 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
    - b: https://huggingface.co/docs/transformers/en/model_doc/bert?utm_source=chatgpt.com
    - I am going to try A-Fine-tuned BERT, if this doesnt work i will try few-shot LLM (or if i have time to do both and compare)
    - We are going to do a sample set (sample_clasification.py) of 500 articles to train the BERT. The sample set will only take the as posible falses the ones that are url= true and keyword= false, and will take the posible true url = true and key word = true
-   - I have downloaded the sample set (download_from_mongo.py)
+   - I have downloaded the sample set (download_from_mongo.py) (ME HE QUEDADO AQUI 30 NOV)
+   (LOS CSV QUE HAY NO ESTAN ACTUALIZADOS)
    - I  have defined the articles that are positive: 
       - 1 = PROTEST if the article’s main focus is a collective, public action (demonstration, march, rally, strike, riot, blockade, occupation, picket, etc.) in which people express political or social claims. The article should describe the event itself (who, where, why, what happened), or its very immediate unfolding (clashes, arrests, dispersal, etc.).
       - 0 = NOT_PROTEST if the article is mainly about elite statements, scandals, normal politics, commentary, or other events where protests are only background or mentioned in passing.
@@ -248,5 +249,10 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
 
    PREGUNTAR A ALESSANDRO QUE MODELO USAR PARA LA CLASSIFICACION 
    ARREGLAR LO DE SUBIR LAS COSAS EN GITHUB
+
+   - BERT is not working and classifyng the sample set that i need manually is not optimal and the aim of the project is avoiding this type of manually works
    
+8. Train the LLM model for classification (class_llm)
+- descargar: pip install openai pymongo python-dotenv tqdm
+- llm_classify.py is going to be the classifier using llms 
 

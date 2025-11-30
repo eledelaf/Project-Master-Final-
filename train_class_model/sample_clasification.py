@@ -16,13 +16,11 @@ N_NON_CANDIDATES = 150    # negatives (keyword_candidate=False, url_candidate=Tr
 # Only consider docs with url_candidate = True
 
 n_candidates_total = source.count_documents({
-    "keyword_candidate": True,
-    "url_candidate": True
+    "keyword_candidate": True
 })
 
 n_non_candidates_total = source.count_documents({
-    "keyword_candidate": False,
-    "url_candidate": True
+    "keyword_candidate": False
 })
 
 n_candidates = min(N_CANDIDATES, n_candidates_total)
@@ -36,26 +34,24 @@ print(f"Sampling {n_candidates} candidates and {n_non_candidates} non-candidates
 
 # Sample positive (candidate) docs
 candidate_docs = list(source.aggregate([
-    {"$match": {"keyword_candidate": True, "url_candidate": True}},
+    {"$match": {"keyword_candidate": True}},
     {"$sample": {"size": n_candidates}},
     {"$project": {
         "_id": 1,
         "title": 1,
         "keyword_candidate": 1,
-        "url_candidate": 1,
         "text": 1
     }}
 ]))
 
 # Sample negative (non-candidate) docs
 non_candidate_docs = list(source.aggregate([
-    {"$match": {"keyword_candidate": False, "url_candidate": True}},
+    {"$match": {"keyword_candidate": False}},
     {"$sample": {"size": n_non_candidates}},
     {"$project": {
         "_id": 1,
         "title": 1,
         "keyword_candidate": 1,
-        "url_candidate": 1,
         "text": 1
     }}
 ]))
@@ -71,8 +67,7 @@ for d in all_docs:
     # False if keyword_candidate=False AND url_candidate=True
     # (we are only sampling url_candidate=True anyway)
     kw = bool(d.get("keyword_candidate", False))
-    url_ok = bool(d.get("url_candidate", False))
-    candidate_label = kw and url_ok
+    candidate_label = kw 
 
     doc_to_insert = {
         "_id": d["_id"],  # same URL as id
