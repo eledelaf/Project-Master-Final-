@@ -10,18 +10,20 @@ _zero_shot_classifier = pipeline(
     model="facebook/bart-large-mnli"
 )
 
+
 # Natural-language labels instead of weird tokens like "NOT_PROTEST"
+
 CANDIDATE_LABELS = [
-    "a concrete real-world protest event in the UK",
-    "something else (no specific protest event in the UK)",
-]
+    "a concrete real-world protest event ",
+    "something else (no specific protest event )",]
+
 
 def classify_article_with_hf(
     title: str,
     text: str,
     max_chars: int = 4000,
     min_length: int = 200,
-    protest_threshold: float = 0.70,
+    protest_threshold: float = 0.57,
 ) -> Optional[Dict[str, Any]]:
     """
     Classify an article as PROTEST / NOT_PROTEST using zero-shot NLI.

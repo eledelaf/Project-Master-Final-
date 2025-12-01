@@ -259,4 +259,11 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
 - llm_classify.py is going to be the classifier using llms 
 - i am going to create an script that uses the llm_classify.py and uploads that to mongo (run_llm.py)
 
-
+- Hugging face classification model (hf_class.py), after that we run it in mongo (run_hf.py) after that we do the validation (validation_hf.py). we are using protest_threshold: float = 0.57 that gives:
+      TP, FP, TN, FN: 15 11 51 8
+      Accuracy:  0.776
+      Precision: 0.577
+      Recall:    0.652
+      F1:        0.612
+I cant find a better F1
+- edit the (run_hf.py) to make it run trough the whole data set in MongoDB

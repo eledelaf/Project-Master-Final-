@@ -14,6 +14,8 @@ MONGO_URI = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.m
 
 DB_NAME = "ProjectMaster"
 COLLECTION_NAME = "sample_texts"
+#COLLECTION_NAME = "Texts"
+
 
 BATCH_SIZE = 20
 
@@ -82,8 +84,8 @@ def main() -> None:
                             "hf_label": result["label"],
                             "hf_label_name": result["label_name"],
                             "hf_confidence": result["confidence"],
-                            "hf_reason": result["reason"],
-                            "hf_model": "facebook/bart-large-mnli-zero-shot",
+                            #"hf_reason": result["reason"],
+                            #"hf_model": "facebook/bart-large-mnli-zero-shot",
                             "hf_status": "ok",
                         }
                     },
