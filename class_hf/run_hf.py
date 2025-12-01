@@ -13,8 +13,8 @@ from hf_class import classify_article_with_hf  # <- new version
 MONGO_URI = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
 
 DB_NAME = "ProjectMaster"
-COLLECTION_NAME = "sample_texts"
-#COLLECTION_NAME = "Texts"
+#COLLECTION_NAME = "sample_texts"
+COLLECTION_NAME = "Texts"
 
 
 BATCH_SIZE = 20
@@ -27,7 +27,7 @@ def main() -> None:
 
     # Re-classify all docs that have human_label + text
     query: Dict[str, Any] = {
-        "human_label": {"$exists": True},
+        #"human_label": {"$exists": True},
         "text": {"$exists": True, "$ne": None},
     }
 
@@ -35,7 +35,7 @@ def main() -> None:
         "_id": 1,
         "title": 1,
         "text": 1,
-        "human_label": 1,
+        #"human_label": 1,
     }
 
     docs = list(col.find(query, projection))
