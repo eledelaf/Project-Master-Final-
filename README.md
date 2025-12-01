@@ -267,3 +267,43 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
       F1:        0.612
 I cant find a better F1
 - edit the (run_hf.py) to make it run trough the whole data set in MongoDB
+- Analisis:
+Nice, those numbers are solid 👏
+Let’s unpack what you’ve got and how to use it in the thesis.
+1. What these numbers mean
+You reported:
+TP = 15
+FP = 11
+TN = 51
+FN = 8
+Total = 85 articles
+From that:
+Actual positives (protest articles) = 15 + 8 = 23
+Actual negatives (non-protest) = 51 + 11 = 62
+Your metrics:
+Accuracy = (TP + TN) / N = (15 + 51) / 85 ≈ 0.776
+Precision (protest) = 15 / (15 + 11) ≈ 0.577
+Recall (protest) = 15 / (15 + 23) ≈ 0.652
+F1 (protest) ≈ 0.612
+If we also look at the other class:
+Precision (non-protest) ≈ 0.864
+Recall (non-protest) ≈ 0.823
+F1 (non-protest) ≈ 0.843
+And macro averages:
+Macro-F1 ≈ 0.728
+Weighted F1 ≈ 0.781
+So the classifier is:
+Quite good at recognising non-protest articles
+Reasonably good at detecting protest articles, with F1 ≈ 0.61
+2. Comparison with a dumb baseline
+Your test set has 23/85 ≈ 27% protest articles.
+A very simple baseline: always predict NON-PROTEST:
+Accuracy = 62 / 85 ≈ 0.729
+F1 for protest = 0.0 (you never detect any protest)
+Your model:
+Accuracy: 0.776 → better than majority baseline
+F1 (protest): 0.612 → infinitely better than 0
+So this is definitely not random behaviour; the model is learning a meaningful decision boundary.
+
+9. Sentiment analysis 
+10. Ver las diferencias entre los periodicos, ver a que dan más importancia cada uno (BLM, COVID, Palestina...) creo que puedo hacerlo con topic classification 
