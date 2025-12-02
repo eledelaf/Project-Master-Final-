@@ -259,7 +259,7 @@ Conduct sentiment and topic modelling, plus temporal and forecasting analysis of
 - llm_classify.py is going to be the classifier using llms 
 - i am going to create an script that uses the llm_classify.py and uploads that to mongo (run_llm.py)
 
-- Hugging face classification model (hf_class.py), after that we run it in mongo (run_hf.py) after that we do the validation (validation_hf.py). we are using protest_threshold: float = 0.57 that gives:
+- Hugging face classification model (zero shot classification: https://medium.com/@venujkvenk/unlocking-the-power-of-zero-shot-classification-a-primer-27e0ddbb0e82)(hf_class.py), after that we run it in mongo (run_hf.py) after that we do the validation (validation_hf.py). we are using protest_threshold: float = 0.57 that gives:
       TP, FP, TN, FN: 15 11 51 8
       Accuracy:  0.776
       Precision: 0.577
@@ -306,4 +306,9 @@ F1 (protest): 0.612 → infinitely better than 0
 So this is definitely not random behaviour; the model is learning a meaningful decision boundary.
 
 9. Sentiment analysis 
-10. Ver las diferencias entre los periodicos, ver a que dan más importancia cada uno (BLM, COVID, Palestina...) creo que puedo hacerlo con topic classification 
+   - Chart with the sentiment analysis depending on the paper
+   - Chart time vs sentiment to see if there is a difference between 2020 (covid) an rest of the time
+   - Topic analysis: (Ver las diferencias entre los periodicos, ver a que dan más importancia cada uno (BLM, COVID, Palestina...) creo que puedo hacerlo con topic classification )/Cual es el tema de las protestas (Ukrania = Peace/ Venezuela = economia / Palestina = Religion) # is not the best 
+   - Protest growing, looking for spickes that signals the onset of the protest event/ contar secuencias, cuantas veces sale la palabra protest antes de que haya una protesta violenta ¿?
+10.
+- Interesting to define how sociaty discuss

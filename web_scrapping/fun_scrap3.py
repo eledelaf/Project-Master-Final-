@@ -27,5 +27,6 @@ def scrape_and_text(url, filename=None):
     except Exception as e:
         print(f"[Newspaper3k] Error processing {url}: {e}")
         return None
+    
 URL = "https://www.dailymail.co.uk/news/article-10456995/Relatives-Bloody-Sunday-victims-hold-remembrance-walk-Londonderry.html"
 print(scrape_and_text(URL))

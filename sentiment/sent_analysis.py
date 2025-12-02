@@ -57,7 +57,7 @@ def main():
         "text": {"$exists": True}          # make sure there is some text
     }
 
-    cursor = col.find(query, no_cursor_timeout=True)
+    cursor = col.find(query)
 
     batch_ops = []
     processed = 0

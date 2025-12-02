@@ -1,5 +1,5 @@
 import pandas as pd
-import concurrent.futures
+import concurrent.futures # Esta integrado en Python ahora así q no hace falta importar
 import time
 import random
 
