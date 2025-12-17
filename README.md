@@ -304,6 +304,7 @@ Your model:
 Accuracy: 0.776 → better than majority baseline
 F1 (protest): 0.612 → infinitely better than 0
 So this is definitely not random behaviour; the model is learning a meaningful decision boundary.
+Ive created an optimisation function in validation_hf.py, that checks every threshold and optimises f0.5
 
 9. Sentiment analysis 
    - Chart with the sentiment analysis depending on the paper
