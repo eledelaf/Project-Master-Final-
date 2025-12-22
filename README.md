@@ -311,5 +311,7 @@ Ive created an optimisation function in validation_hf.py, that checks every thre
    - Chart time vs sentiment to see if there is a difference between 2020 (covid) an rest of the time
    - Topic analysis: (Ver las diferencias entre los periodicos, ver a que dan más importancia cada uno (BLM, COVID, Palestina...) creo que puedo hacerlo con topic classification )/Cual es el tema de las protestas (Ukrania = Peace/ Venezuela = economia / Palestina = Religion) # is not the best 
    - Protest growing, looking for spickes that signals the onset of the protest event/ contar secuencias, cuantas veces sale la palabra protest antes de que haya una protesta violenta ¿?
-10.
-- Interesting to define how sociaty discuss
+10.Plots 
+I have made a few python files that return plots taking into consideration the sentiment 
+
+11. Topic analysis 
