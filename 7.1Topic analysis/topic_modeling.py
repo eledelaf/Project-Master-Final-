@@ -163,7 +163,6 @@ def load_protest_articles(mcfg: MongoConfig, cfg: TopicConfig) -> pd.DataFrame:
     print(f"Loaded {len(df):,} protest docs after filtering (min_chars={cfg.min_chars})")
     return df
 
-
 # -----------------------------
 # Topic modelling
 # -----------------------------
