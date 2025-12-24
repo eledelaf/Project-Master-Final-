@@ -204,6 +204,18 @@ def relabel_from_confidence(col, threshold: float, *, debug_id=None, dry_run=Fal
 
     print(f"[relabel] scanned={scanned}  convertible_confidence={convertible}  dry_run={dry_run}")
 
+def _flush(col, ops: List[UpdateOne], *, tag: str = "bulk") -> None:
+    """Write a batch of UpdateOne ops safely."""
+    if not ops:
+        return
+    try:
+        res = col.bulk_write(ops, ordered=False)
+        # print only when something actually changed (avoids spam)
+        if res.modified_count:
+            print(f"[{tag}] modified={res.modified_count} matched={res.matched_count}")
+    except PyMongoError as e:
+        print(f"[Mongo] bulk_write error: {e}")
+
 def classify_missing_confidence(col, args) -> None:
     """
     Classify ONLY documents that don't have hf_confidence yet (newly scraped).
@@ -298,11 +310,13 @@ def classify_missing_confidence(col, args) -> None:
 
             if len(ops) >= BATCH_SIZE:
                 if not args.dry_run:
-                    _flush(col, ops)
+                    #_flush(col, ops)
+                    _flush(col, ops, tag="classify_missing")
                 ops = []
 
         if ops and not args.dry_run:
-            _flush(col, ops)
+            #_flush(col, ops)
+            _flush(col, ops, tag="classify_missing")
 
         if args.limit and scanned >= args.limit:
             break
