@@ -59,6 +59,7 @@ def parse_args():
     p.add_argument("--debug_id", type=str, default=None, help="Print before/after for one _id (URL).")
     p.add_argument("--dry_run", action="store_true", help="Compute but do not write updates.")
     p.add_argument("--limit", type=int, default=0, help="Limit relabel docs for testing (0 = no limit).")
+    p.add_argument("--hybrid",action="store_true", help="Relabel docs that already have hf_confidence; classify only docs missing hf_confidence.")
     return p.parse_args()
 
 _TOP_RE = re.compile(r"Top='(?P<label>.*?)'\s*\((?P<score>[0-9]*\.?[0-9]+)\)")
@@ -203,6 +204,113 @@ def relabel_from_confidence(col, threshold: float, *, debug_id=None, dry_run=Fal
 
     print(f"[relabel] scanned={scanned}  convertible_confidence={convertible}  dry_run={dry_run}")
 
+def classify_missing_confidence(col, args) -> None:
+    """
+    Classify ONLY documents that don't have hf_confidence yet (newly scraped).
+    Atlas-safe pagination by _id.
+    """
+    from hf_class_v2 import classify_article_with_hf
+
+    base_query: Dict[str, Any] = {"text": {"$exists": True, "$ne": None, "$ne": ""}}
+
+    if not args.force:
+        # only docs that are missing confidence (or have it as null)
+        base_query["$or"] = [
+            {"hf_confidence": {"$exists": False}},
+            {"hf_confidence": None},
+        ]
+
+    projection = {"_id": 1, "title": 1, "text": 1, "hf_confidence": 1, "hf_status": 1}
+    READ_BATCH = 250
+    last_id = None
+
+    scanned = 0
+    attempted = 0
+
+    while True:
+        q = dict(base_query)
+        if last_id is not None:
+            q["_id"] = {"$gt": last_id}
+
+        batch = list(col.find(q, projection).sort("_id", 1).limit(READ_BATCH))
+        if not batch:
+            break
+
+        ops: List[UpdateOne] = []
+
+        for doc in batch:
+            scanned += 1
+            last_id = doc["_id"]
+
+            if args.limit and scanned > args.limit:
+                break
+
+            doc_id = doc["_id"]
+            title = doc.get("title") or ""
+            text = doc.get("text") or ""
+
+            try:
+                attempted += 1
+                res = classify_article_with_hf(
+                    title,
+                    text,
+                    protest_threshold=args.threshold,
+                    min_length=args.min_length,
+                    max_chars=args.max_chars,
+                )
+            except Exception as e:
+                ops.append(
+                    UpdateOne(
+                        {"_id": doc_id},
+                        {"$set": {"hf_status": "error", "hf_error_message": str(e)}},
+                    )
+                )
+            else:
+                if res is None:
+                    ops.append(
+                        UpdateOne(
+                            {"_id": doc_id},
+                            {
+                                "$set": {
+                                    "hf_status": "skipped_short_text",
+                                    "hf_reason": f"Skipped: text shorter than min_length={args.min_length}",
+                                }
+                            },
+                        )
+                    )
+                else:
+                    # store full classification output
+                    payload = {
+                        "hf_confidence": res["confidence"],
+                        "hf_label": res["label"],
+                        "hf_label_name": res["label_name"],
+                        "hf_model": res["model"],
+                        "hf_reason": res["reason"],
+                        "hf_status": "ok",
+                    }
+                    # optional if your classifier returns it
+                    if "top_label" in res:
+                        payload["hf_top_label"] = res["top_label"]
+                    if "top_score" in res:
+                        payload["hf_top_score"] = res["top_score"]
+
+                    ops.append(UpdateOne({"_id": doc_id}, {"$set": payload}))
+
+            if len(ops) >= BATCH_SIZE:
+                if not args.dry_run:
+                    _flush(col, ops)
+                ops = []
+
+        if ops and not args.dry_run:
+            _flush(col, ops)
+
+        if args.limit and scanned >= args.limit:
+            break
+
+    print(
+        f"[classify_missing] scanned={scanned} attempted_inference={attempted} "
+        f"dry_run={args.dry_run} force={args.force}"
+    )
 
 def main() -> None:
     args = parse_args()
@@ -211,6 +319,28 @@ def main() -> None:
     client = MongoClient(MONGO_URI)
     col = client[args.db][args.collection]
 
+    # --- HYBRID MODE (what you want) ---
+    if args.hybrid:
+        print("[run_hf] Hybrid mode:")
+        print("  1) Relabel docs that already have hf_confidence using current threshold")
+        print("  2) Classify docs missing hf_confidence (newly scraped)")
+
+        # 1) relabel existing confidence
+        relabel_from_confidence(
+            col,
+            args.threshold,
+            debug_id=args.debug_id,
+            dry_run=args.dry_run,
+            limit=args.limit,
+        )
+
+        # 2) classify missing confidence
+        classify_missing_confidence(col, args)
+
+        print("[run_hf] Done (hybrid).")
+        return
+
+    # --- Existing modes preserved ---
     if args.relabel_only:
         print("[run_hf] Relabel-only mode: updating labels from existing hf_confidence (no HF inference).")
         relabel_from_confidence(
@@ -222,90 +352,10 @@ def main() -> None:
         )
         return
 
-    query: Dict[str, Any] = {"text": {"$exists": True, "$ne": None, "$ne": ""}}
-    if not args.force:
-        query["$or"] = [
-            {"hf_status": {"$exists": False}},
-            {"hf_status": {"$ne": "ok"}},
-        ]
-
-    projection = {"_id": 1, "title": 1, "text": 1}
-    docs = list(col.find(query, projection))
-    print(f"[run_hf] Found {len(docs)} documents to classify.")
-
-    ops: List[UpdateOne] = []
-
-    for doc in tqdm(docs):
-        doc_id = doc["_id"]
-        title = doc.get("title") or ""
-        text = doc.get("text") or ""
-
-        try:
-            from hf_class_v2 import classify_article_with_hf
-            res = classify_article_with_hf(
-                title,
-                text,
-                protest_threshold=args.threshold,
-                min_length=args.min_length,
-                max_chars=args.max_chars,
-            )
-        except Exception as e:
-            ops.append(
-                UpdateOne(
-                    {"_id": doc_id},
-                    {"$set": {"hf_status": "error", "hf_error_message": str(e)}},
-                )
-            )
-        else:
-            if res is None:
-                ops.append(
-                    UpdateOne(
-                        {"_id": doc_id},
-                        {
-                            "$set": {
-                                "hf_status": "skipped_short_text",
-                                "hf_reason": f"Skipped: text shorter than min_length={args.min_length}",
-                            }
-                        },
-                    )
-                )
-            else:
-                ops.append(
-                    UpdateOne(
-                        {"_id": doc_id},
-                        {
-                            "$set": {
-                                "hf_confidence": res["confidence"],
-                                "hf_label": res["label"],
-                                "hf_label_name": res["label_name"],
-                                "hf_model": res["model"],
-                                "hf_reason": res["reason"],
-                                "hf_status": "ok",
-                            }
-                        },
-                    )
-                )
-
-        if len(ops) >= BATCH_SIZE:
-            _flush(col, ops)
-            ops = []
-
-    if ops:
-        _flush(col, ops)
-
-    print("[run_hf] Done.")
-
-
-def _flush(col, ops: List[UpdateOne]) -> None:
-    try:
-        col.bulk_write(ops, ordered=False)
-    except PyMongoError as e:
-        print(f"[Mongo] bulk_write error: {e}")
-
-
 if __name__ == "__main__":
     import sys
     if len(sys.argv) == 1:
-        sys.argv += ["--relabel_only", "--threshold", "0.65"]
+        sys.argv += ["--hybrid", "--threshold", "0.65"]
     main()
+
 
