@@ -21,8 +21,8 @@ from datetime import datetime
 # ----------------------------
 MONGO_URI = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
 DB_NAME = "ProjectMaster"
-COLLECTION_NAME = "Texts"
-#COLLECTION_NAME = "sample_texts"
+#COLLECTION_NAME = "Texts"
+COLLECTION_NAME = "sample_texts"
 
 
 # Keep ONLY these fields in the collection (everything else is removed)
@@ -40,13 +40,9 @@ KEEP_FIELDS = [
 """
 KEEP_FIELDS = [
     "_id",
-    "publish_date",
-    "status",
-    "time_enqueued",  
     "title",
     "text",
-    "time_scraped",
-    "paper",
+    "human_label",
     "hf_confidence",
     "hf_label",
     "hf_label_name",
