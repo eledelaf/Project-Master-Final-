@@ -7,33 +7,25 @@ each one.
 """
 import csv
 import pandas as pd
-
 import matplotlib.pyplot as plt
+
+from pathlib import Path
 
 # 1. Load your CSV file
 df = pd.read_csv('6.Topic_analysis/topic_modeling/articles_with_topics.csv', sep=',', encoding='utf-8')
 
+#out_dir = Path("7.2figures/topic_by_time.png")
+
 # 2. Select the desired columns
 desired_columns = ['url','published_date', 'topic']
 df_clean = df[desired_columns]
-print(df_clean.head())
+#print(df_clean.head())
 
 df_clean['published_date'] = pd.to_datetime(df_clean['published_date'])
 
 # drop rows where published_date is null
 df_clean = df_clean.dropna(subset=['published_date'])
 
-# Choose the topics and give them names 
-topic = {
-    -1: "BLM UK",
-    0: "Capitol",
-    1: "Anti-immigration UK",
-    2: "BLM USA",
-    4: "COVID UK",
-    5: "Gaza",
-    6: "COVID EU",
-    7: "Ukraine"
-}
 
 # I am grouping topics for better visualization
 topic_groups = {
@@ -48,7 +40,7 @@ topic_groups = {
 # We are going to add the topic group names to the data
 df_clean['topic_group'] = df_clean['topic'].map(lambda x: next((k for k, v in topic_groups.items() if x in v), "Other"))
 
-print(df_clean.head())
+#print(df_clean.head())
 # Filter by topic group 
 df_clean = df_clean[df_clean['topic_group'].isin(topic_groups.keys())]
 
@@ -72,4 +64,9 @@ plt.title("Evolution of Topic Groups Over Time")
 plt.legend()
 plt.xticks(rotation=45)
 plt.tight_layout()
+plt.savefig("7.2figures/topic_by_time.png")
 plt.show()
+
+# We are going to find the peak of each topic 
+peak_topics = topic_month_counts.loc[topic_month_counts.groupby('topic_group')['count'].idxmax()]
+print(peak_topics)
