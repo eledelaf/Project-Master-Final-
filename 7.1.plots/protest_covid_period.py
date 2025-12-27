@@ -4,10 +4,10 @@ counts_covid_periods.py
 
 Counts PROTEST articles by COVID period (pre/during/post), overall and by outlet.
 
-Time periods (your definitions):
+Time periods:
 - Pre-COVID:   2020-01-01 to 2020-03-11  (end EXCLUSIVE)
 - COVID:       2020-03-11 to 2022-02-24  (end EXCLUSIVE)
-- Post-COVID:  2022-02-24 to 2024-12-31  (end INCLUSIVE -> implemented as < 2025-01-01)
+- Post-COVID:  2022-02-24 to 2024-12-31  (end INCLUSIVE)
 """
 
 from pymongo import MongoClient
@@ -30,7 +30,7 @@ USE_THRESHOLD_LABEL = True
 PERIODS = [
     ("Pre-COVID",  "2020-01-01", "2020-03-11"),
     ("COVID",      "2020-03-11", "2022-02-24"),
-    ("Post-COVID", "2022-02-24", "2025-01-01"),  # makes 2024-12-31 included
+    ("Post-COVID", "2022-02-24", "2025-01-01"), 
 ]
 
 def base_filter():
@@ -101,7 +101,7 @@ def main():
     tell = "hf_reason (threshold-based)" if USE_THRESHOLD_LABEL else "hf_label_name"
     print(f"\nLabel source used: {tell}")
 
-    out_csv = "protest_counts_by_covid_period_and_outlet.csv"
+    out_csv = "7.3outputs/protest_counts_by_covid_period_and_outlet.csv"
     df.to_csv(out_csv)
     print(f"\nSaved: {out_csv}")
 

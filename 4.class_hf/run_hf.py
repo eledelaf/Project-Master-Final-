@@ -14,7 +14,7 @@ Stored fields per document (on success):
 
 Threshold is passed via CLI (--threshold) or defaults to 0.65.
 """
-
+#hf_class
 
 from __future__ import annotations
 
@@ -42,8 +42,8 @@ MONGO_URI = os.getenv(
 )
 
 DB_NAME_DEFAULT = "ProjectMaster"
-COLLECTION_NAME_DEFAULT = "Texts"
-#COLLECTION_NAME_DEFAULT = "sample_texts"
+#COLLECTION_NAME_DEFAULT = "Texts"
+COLLECTION_NAME_DEFAULT = "sample_texts"
 BATCH_SIZE = 50
 
 
@@ -221,7 +221,7 @@ def classify_missing_confidence(col, args) -> None:
     Classify ONLY documents that don't have hf_confidence yet (newly scraped).
     Atlas-safe pagination by _id.
     """
-    from hf_class_v2 import classify_article_with_hf
+    from hf_class import classify_article_with_hf
 
     base_query: Dict[str, Any] = {"text": {"$exists": True, "$ne": None, "$ne": ""}}
 

@@ -27,6 +27,7 @@ MONGO_URI = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.m
 DB_NAME = "ProjectMaster"
 COLLECTION_NAME = "Texts"
 
+
 # Recommended if your analysis focuses on protest reporting
 PROTEST_ONLY = True
 
@@ -40,7 +41,7 @@ COVID_PERIODS = [
 ]
 
 # Output
-OUT_DIR = Path("figures")
+OUT_DIR = Path("7.2figures")
 OUT_FILE = OUT_DIR / "sentiment_composition_over_time.png"
 
 

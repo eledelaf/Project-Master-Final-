@@ -43,7 +43,7 @@ BINS = 200  # x-grid resolution
 SMOOTHING_SIGMA = 2.5  # gaussian smoothing over histogram bins (in bins). Increase for smoother curves.
 
 # Output
-OUT_DIR = Path("figures")
+OUT_DIR = Path("7.2figures")
 OUT_FILE = OUT_DIR / "sentiment_density_by_period.png"
 
 

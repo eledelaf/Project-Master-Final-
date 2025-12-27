@@ -1,19 +1,9 @@
 #!/usr/bin/env python3
 """
-weekly_protest_peaks_with_uri.py
+weekly_protest_peaks.py
 
 Compute weekly counts of PROTEST-labelled articles from a MongoDB collection
 and report the weeks with the highest number of PROTEST articles.
-
-This version keeps the MongoDB URI INSIDE the code (per your request).
-
-IMPORTANT:
-- Paste your full MongoDB URI into MONGO_URI below.
-- Avoid sharing this file publicly because the URI contains credentials.
-
-Usage:
-  python weekly_protest_peaks_with_uri.py --top-k 15
-  python weekly_protest_peaks_with_uri.py --label-source hf_label_name --top-k 15
 """
 
 import argparse
@@ -72,10 +62,10 @@ def main() -> None:
     parser.add_argument("--rule", default="W-MON",
                         help="pandas resample rule for weeks (default: W-MON). Use W-SUN for weeks ending Sunday.")
     parser.add_argument("--top-k", type=int, default=10, help="How many peak weeks to print (default: 10).")
-    parser.add_argument("--out-csv", default="weekly_protest_counts.csv",
-                        help="Output CSV path for weekly counts (default: weekly_protest_counts.csv).")
-    parser.add_argument("--out-pivot-csv", default="weekly_protest_counts_by_paper.csv",
-                        help="Output CSV path for weekly counts by paper (default: weekly_protest_counts_by_paper.csv).")
+    parser.add_argument("--out-csv", default="7.3outputs/weekly_protest_counts.csv",
+                        help="Output CSV path for weekly counts (default: 7.3outputs/weekly_protest_counts.csv).")
+    parser.add_argument("--out-pivot-csv", default="7.3outputs/weekly_protest_counts_by_paper.csv",
+                        help="Output CSV path for weekly counts by paper (default: 7.3outputsweekly_protest_counts_by_paper.csv).")
     parser.add_argument("--no-pivot", action="store_true",
                         help="If set, do not create the by-paper pivot CSV.")
     args = parser.parse_args()

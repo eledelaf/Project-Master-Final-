@@ -20,8 +20,11 @@ REQUIRE_SENTIMENT = False
 YEAR_MIN = 2020
 YEAR_MAX = 2024
 
-OUT_PIVOT_CSV = "protest_counts_by_year_outlet.csv"
-OUT_LONG_CSV = "protest_counts_long.csv"
+OUT_PIVOT_CSV = "7.3outputs/protest_counts_by_year_outlet.csv"
+OUT_LONG_CSV = "7.3outputs/protest_counts_long.csv"
+
+#OUT_PIVOT_CSV = "protest_counts_by_year_outlet.csv"
+#OUT_LONG_CSV = "protest_counts_long.csv"
 
 
 def build_match(label_mode: str, require_sentiment: bool) -> dict:

@@ -21,7 +21,7 @@ COVID_START = "2020-03-11"
 COVID_END = "2022-02-24"
 POST_END = "2024-12-31"   # used only to cap the analysis window
 
-OUT_DIR = Path("outputs")
+OUT_DIR = Path("7.3outputs")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ----------------------------

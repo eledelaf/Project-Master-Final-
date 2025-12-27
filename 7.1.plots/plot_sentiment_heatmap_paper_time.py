@@ -44,7 +44,7 @@ TOP_N_PAPERS = 20  # set None to disable
 FILL_MISSING_WITH = np.nan  # np.nan keeps missing white; or set 0 for neutral-ish (not recommended)
 
 # Output
-OUT_DIR = Path("figures")
+OUT_DIR = Path("7.2figures")
 OUT_FILE = OUT_DIR / "sentiment_heatmap_paper_time.png"
 
 

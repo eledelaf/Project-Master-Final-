@@ -26,26 +26,27 @@ from pymongo import MongoClient
 
 
 # ----------------------------
-# Config (edit these)
+# Config
 # ----------------------------
 MONGO_URI = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
 DB_NAME = "ProjectMaster"
 COLLECTION_NAME = "Texts"
 
-# Filter: keep only protest-labelled articles (recommended for your thesis question).
+# Filter: keep only protest-labelled articles.
 PROTEST_ONLY = True
 
 # Monthly aggregation frequency for time series
 MONTH_FREQ = "MS"  # month-start; alternative: "M" for month-end
 
-# Limit papers in faceted plots (to avoid unreadable figures)
+# Limit papers in faceted plots, to avoid unreadable figures
 MAX_PAPERS_FACET = 12  # set None to disable
 
-# Drop papers with too few documents (helps stability of distributions)
+# Drop papers with too few documents, helps stability of distributions
 MIN_DOCS_PER_PAPER = 20  # set to 1 if you want everything
 
-# Define periods for the COVID comparison (edit to match your methodology)
-# (Defaults: WHO pandemic declaration 2020-03-11; most UK legal restrictions ended 2022-02-24.)
+# Define periods for the COVID comparison 
+# Defaults: WHO pandemic declaration 2020-03-11
+# Most UK legal restrictions ended 2022-02-24
 PERIODS = [
     {"name": "Pre-COVID",  "start": None,        "end": "2020-03-10"},
     {"name": "COVID",      "start": "2020-03-11","end": "2022-02-24"},
@@ -53,7 +54,7 @@ PERIODS = [
 ]
 
 # Output
-OUT_DIR = Path("figures")
+OUT_DIR = Path("7.2figures")
 OUT_A = OUT_DIR / "sentiment_monthly_mean_facets.png"
 OUT_B1 = OUT_DIR / "sentiment_distribution_by_paper.png"
 OUT_B2 = OUT_DIR / "sentiment_distribution_by_paper_by_period.png"
