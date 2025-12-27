@@ -6,10 +6,6 @@ Creates:
 A) Time series: monthly mean compound (overall).
 B1) Overall distribution: violin + boxplot of compound.
 B2) COVID angle: distributions faceted by period (pre/during/post).
-
-Usage:
-  export MONGO_URI="mongodb+srv://USER:PASSWORD@HOST/?retryWrites=true&w=majority"
-  python plot_sentiment_overall.py
 """
 
 import os
@@ -38,6 +34,7 @@ MIN_TEXT_CHARS = None  # e.g. 80
 # Define periods for the COVID comparison
 # WHO pandemic declaration 2020-03-11
 # Most UK legal restrictions ended 2022-02-24 (your chosen cutoff)
+
 PERIODS = [
     {"name": "Pre-COVID",  "start": None,         "end": "2020-03-10"},
     {"name": "COVID",      "start": "2020-03-11", "end": "2022-02-24"},

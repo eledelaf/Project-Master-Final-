@@ -21,12 +21,12 @@ from datetime import datetime
 # ----------------------------
 MONGO_URI = "mongodb+srv://eledelaf:Ly5BX57aSXIzJVde@articlesprotestdb.bk5rtxs.mongodb.net/?retryWrites=true&w=majority&appName=ArticlesProtestDB"
 DB_NAME = "ProjectMaster"
-#COLLECTION_NAME = "Texts"
-COLLECTION_NAME = "sample_texts"
+COLLECTION_NAME = "Texts"
+#COLLECTION_NAME = "sample_texts"
 
 
 # Keep ONLY these fields in the collection (everything else is removed)
-"""
+
 KEEP_FIELDS = [
     "_id",
     "publish_date",
@@ -36,25 +36,20 @@ KEEP_FIELDS = [
     "text",
     "time_scraped",
     "paper",  
-]
-"""
-KEEP_FIELDS = [
-    "_id",
-    "title",
-    "text",
-    "human_label",
     "hf_confidence",
     "hf_label",
     "hf_label_name",
     "hf_model",
     "hf_reason",
     "hf_status",
+    "sentiment"
 ]
 
 
+
 # Optional: make a backup copy collection first (recommended)
-#MAKE_BACKUP = True
-MAKE_BACKUP = False
+MAKE_BACKUP = True
+#MAKE_BACKUP = False
 BACKUP_SUFFIX = "_backup_before_clean"  # collection will be: COLLECTION_NAME + suffix
 
 # If fallback loop is used:
