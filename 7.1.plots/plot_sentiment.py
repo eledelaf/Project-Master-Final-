@@ -41,6 +41,28 @@ PERIODS = [
     {"name": "Post-COVID", "start": "2022-02-25", "end": None},
 ]
 
+def get_covid_window():
+    covid = next((p for p in PERIODS if p["name"].lower() == "covid"), None)
+    if not covid:
+        return None, None
+    start = pd.to_datetime(covid["start"]) if covid.get("start") else None
+    end = pd.to_datetime(covid["end"]) if covid.get("end") else None
+    return start, end
+
+COVID_START, COVID_END = get_covid_window()
+
+def shade_covid(ax):
+    if COVID_START is None or COVID_END is None:
+        return
+    ax.axvspan(COVID_START, COVID_END, color="lightsteelblue", alpha=0.20, zorder=0)
+    # Optional label inside the shaded region:
+    mid = COVID_START + (COVID_END - COVID_START) / 2
+    ax.text(
+        mid, 0.92, "COVID-19 period",
+        transform=ax.get_xaxis_transform(),  # x=data, y=axes fraction
+        ha="center", va="top", fontsize=10
+    )
+
 # Output
 OUT_DIR = Path("7.2figures")
 OUT_A = OUT_DIR / "sentiment_monthly_mean_overall.png"
@@ -139,6 +161,7 @@ def plot_monthly_mean(df: pd.DataFrame) -> None:
     )
 
     fig, ax = plt.subplots(figsize=(12, 4))
+    shade_covid(ax)   # <- add this line
     ax.plot(monthly["month"], monthly["compound"], linewidth=2)
     ax.axhline(0, linewidth=1, linestyle="--")
     ax.set_ylim(-1, 1)

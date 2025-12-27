@@ -52,6 +52,27 @@ PERIODS = [
     {"name": "COVID",      "start": "2020-03-11","end": "2022-02-24"},
     {"name": "Post-COVID", "start": "2022-02-25","end": None},
 ]
+def get_covid_window():
+    covid = next((p for p in PERIODS if p["name"].lower() == "covid"), None)
+    if not covid:
+        return None, None
+    start = pd.to_datetime(covid["start"]) if covid.get("start") else None
+    end = pd.to_datetime(covid["end"]) if covid.get("end") else None
+    return start, end
+
+COVID_START, COVID_END = get_covid_window()
+
+def shade_covid(ax, add_label=False):
+    if COVID_START is None or COVID_END is None:
+        return
+    ax.axvspan(COVID_START, COVID_END, color="lightsteelblue", alpha=0.20, zorder=0)
+    if add_label:
+        mid = COVID_START + (COVID_END - COVID_START) / 2
+        ax.text(
+            mid, 0.92, "COVID-19 period",
+            transform=ax.get_xaxis_transform(),
+            ha="center", va="top", fontsize=9
+        )
 
 # Output
 OUT_DIR = Path("7.2figures")
@@ -160,10 +181,11 @@ def plot_faceted_monthly_means(df: pd.DataFrame) -> None:
         monthly = monthly[monthly["paper"].isin(paper_order)]
 
     n = len(paper_order)
-    ncols = 3 if n >= 3 else n
-    nrows = ceil(n / ncols)
-
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(12, 3.2 * nrows), sharex=True, sharey=True)
+    fig, axes = plt.subplots(
+        nrows=n, ncols=1,
+        figsize=(12, 2.6 * n),   
+        sharex=True, sharey=True
+        )
     if n == 1:
         axes = [axes]
     else:
@@ -171,6 +193,7 @@ def plot_faceted_monthly_means(df: pd.DataFrame) -> None:
 
     for i, paper in enumerate(paper_order):
         ax = axes[i]
+        shade_covid(ax, add_label=(i == 0))
         d = monthly[monthly["paper"] == paper].sort_values("month")
         ax.plot(d["month"], d["compound"], linewidth=2)
         ax.axhline(0, linewidth=1, linestyle="--")
