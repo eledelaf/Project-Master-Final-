@@ -35,25 +35,40 @@ topic = {
     7: "Ukraine"
 }
 
-# Filter by topic 
-df_clean = df_clean[df_clean['topic'].isin(topic.keys())]
+# I am grouping topics for better visualization
+topic_groups = {
+    "BLM": [-1, 2],
+    "COVID": [4, 6],
+    "Gaza": [5],
+    "Ukraine": [7],
+    "Capitol": [0],
+    "Anti-immigration": [1]
+}
+
+# We are going to add the topic group names to the data
+df_clean['topic_group'] = df_clean['topic'].map(lambda x: next((k for k, v in topic_groups.items() if x in v), "Other"))
+
+print(df_clean.head())
+# Filter by topic group 
+df_clean = df_clean[df_clean['topic_group'].isin(topic_groups.keys())]
 
 
 # 3. Make month-year bins
 df_clean['month_year'] = df_clean['published_date'].dt.to_period('M').dt.to_timestamp()
 
 # 3.1 Count articles per topic and month
-topic_month_counts = df_clean.groupby(['month_year', 'topic']).size().reset_index(name='count')
+topic_month_counts = df_clean.groupby(['month_year', 'topic_group']).size().reset_index(name='count')
 
 # 4. Plot the evolution of topics over time
 plt.figure(figsize=(12, 6))
-for topic_id, topic_name in topic.items():
-    data = topic_month_counts[topic_month_counts['topic'] == topic_id]
-    plt.plot(data['month_year'], data['count'], label=topic_name)
 
-plt.xlabel('Month-Year')
-plt.ylabel('Number of Articles')
-plt.title('Evolution of Topics Over Time')
+for group_name in topic_groups.keys():   # group_name = "COVID", "BLM", ...
+    data = topic_month_counts[topic_month_counts["topic_group"] == group_name]
+    plt.plot(data["month_year"], data["count"], label=group_name)
+
+plt.xlabel("Month-Year")
+plt.ylabel("Number of Articles")
+plt.title("Evolution of Topic Groups Over Time")
 plt.legend()
 plt.xticks(rotation=45)
 plt.tight_layout()
